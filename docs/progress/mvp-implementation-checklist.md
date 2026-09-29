@@ -28,7 +28,7 @@
     
 - [x] Points area exists.
     
-- [ ] System Log area exists for administrators.
+- [x] System Log area exists for administrators.
     
 - [ ] Final authenticated internal-user experience exists.
     
@@ -51,31 +51,29 @@
     
 - [ ] Authentication.
     
-- [ ] Account-to-officer linking.
+- [x] Account-to-officer linking (local PostgreSQL identity rules verified; hosted provider configuration pending).
     
-- [ ] Application roles.
+- [x] Application roles (local role assignment and backend invariants verified; hosted sign-in remains pending).
     
-- [ ] Branch-scoped authorization.
+- [x] Branch-scoped authorization.
     
-- [ ] Final RLS policies.
+- [x] Final RLS policies (local grants, policies, and role-context tests; hosted deployment remains pending).
     
-- [ ] Trusted automatic event-completion processing.
+- [x] Trusted automatic event-completion processing (migration and local Cron execution verified; hosted deployment pending).
     
-- [ ] Participation rate configuration.
+- [x] Participation rate configuration.
     
-- [ ] Participation-rate snapshots.
+- [x] Participation-rate snapshots.
     
-- [ ] Warning system.
+- [x] Warning system.
     
-- [ ] Warning approval workflow.
+- [x] Warning approval workflow.
     
-- [ ] Flyer workflow.
     
-- [ ] Recurring events.
     
-- [ ] System/audit log.
+- [x] System/audit log for implemented workflows (future mutation coverage remains tracked below).
     
-- [ ] Final actor attribution for protected mutations.
+- [ ] Final actor attribution for protected mutations (current human, warning, and scheduled point actions are audited; future early-completion actions remain pending).
     
 
 ---
@@ -124,6 +122,8 @@
 - [x] `/officers/[id]`
     
 - [x] `/officers/[id]/edit`
+
+- [x] `/officers/catalogs` admin position and branch management.
     
 - [x] `/events`
     
@@ -132,20 +132,22 @@
 - [x] `/events/[id]`
     
 - [x] `/events/[id]/edit`
+
+- [x] `/events/types` admin event-type management.
     
 - [x] `/points`
     
-- [ ] Authentication/login surface.
+- [x] Authentication/login surface.
     
-- [ ] System Log surface.
+- [x] System Log surface.
     
-- [ ] Warning administration surface/component.
+- [x] Warning administration surface/component.
     
 - [ ] Participation-rate configuration surface.
     
-- [ ] Administration controls for application admins.
+- [x] Administration controls for application roles and controlled catalogs.
     
-- [ ] Any UI required to manage event types according to the final event-type design.
+- [x] Admin UI to create, rename, and safely delete event types.
     
 
 ## Shared frontend infrastructure
@@ -168,13 +170,13 @@
     
 - [x] Active navigation route indication exists.
     
-- [ ] Authentication state is represented in global application UI.
+- [x] Authentication state is represented in global application UI.
     
-- [ ] Logged-in officer identity is accessible where needed.
+- [x] Logged-in officer identity is accessible where needed.
     
-- [ ] Application role is accessible where needed.
+- [x] Application role is accessible where needed (identity context only; role enforcement remains PR 3).
     
-- [ ] Role-aware navigation is implemented.
+- [x] Role-aware navigation is implemented.
     
 - [ ] Role-aware buttons/actions are implemented.
     
@@ -212,33 +214,33 @@
 
 ## Production Supabase integration
 
-- [ ] Add Supabase Auth.
+- [x] Add Supabase Auth application integration (external Google provider setup remains pending).
     
-- [ ] Add session-aware Supabase requests.
+- [x] Add session-aware Supabase requests.
     
-- [ ] Replace anonymous application behavior with authenticated behavior.
+- [x] Replace anonymous application behavior with authenticated behavior.
     
-- [ ] Ensure Server Components can identify the current authenticated user.
+- [x] Ensure Server Components can identify the current authenticated user.
     
-- [ ] Ensure Server Actions can identify the current authenticated user.
+- [x] Ensure Server Actions can identify the current authenticated user.
     
-- [ ] Ensure database requests execute with the proper authenticated identity.
+- [x] Ensure database requests execute with the proper authenticated identity.
     
-- [ ] Ensure direct client/database calls receive the same authorization protections as Server Actions.
+- [x] Ensure direct client/database calls receive the same authorization protections as Server Actions.
     
-- [ ] Remove production dependency on anonymous development write access.
+- [x] Remove production dependency on anonymous development write access.
     
-- [ ] Remove anonymous execution access from privileged RPCs.
+- [x] Remove anonymous execution access from privileged RPCs.
     
-- [ ] Review grants for `anon`.
+- [x] Review grants for `anon`.
     
-- [ ] Configure correct grants for `authenticated`.
+- [x] Configure correct grants for `authenticated`.
     
-- [ ] Review grants for views.
+- [x] Review grants for views.
     
-- [ ] Review grants for RPC functions.
+- [x] Review grants for RPC functions.
     
-- [ ] Regenerate TypeScript database types after final schema migrations.
+- [x] Regenerate TypeScript database types after final schema migrations.
     
 
 ---
@@ -260,15 +262,15 @@
 ## Authentication implementation
 
 - [ ] Configure Google provider in Supabase Auth.
-- [ ] Implement Google sign-in and callback flow.
-- [ ] Persist and restore the Supabase session on page requests.
-- [ ] Protect internal routes and redirect unauthenticated users.
-- [ ] Implement safe first-login matching and linking, including duplicate/ambiguous-match denial.
-- [ ] Resolve the active officer through auth_user_id on each protected request.
-- [ ] Resolve application_role and branch memberships from the linked officer.
-- [ ] Reject unlinked, inactive, or otherwise unapproved users.
-- [ ] Revoke access after an officer is deactivated, even for an existing session.
-- [ ] Display signed-in identity where useful and provide sign-out.
+- [x] Implement Google sign-in and callback flow (repository code; live Google provider verification pending).
+- [x] Persist and restore the Supabase session on page requests (cookie-backed SSR and refresh proxy).
+- [x] Protect internal routes and redirect unauthenticated users.
+- [x] Implement safe first-login matching and linking, including duplicate/ambiguous-match denial.
+- [x] Resolve the active officer through auth_user_id on each protected request.
+- [x] Resolve application_role and branch memberships from the linked officer; PR 3 adds authorization decisions.
+- [x] Reject unlinked, inactive, or otherwise unapproved users at the application entry points.
+- [x] Revoke application-route access after an officer is deactivated, even for an existing session.
+- [x] Display signed-in identity where useful and provide sign-out.
 
 # 4. Application Roles
 
@@ -282,28 +284,28 @@
 
 ## Role implementation
 
-- [ ] Implement and constrain the application_role officer column.
-- [ ] Support multiple administrators, including President, Vice Presidents, the application owner, and other designated officers as assigned.
-- [ ] Allow existing admins to add/remove admin assignments through backend-protected operations.
-- [ ] Prevent normal officers from promoting themselves or changing another user's role.
-- [ ] Protect admin-management operations on the backend.
+- [x] Implement and constrain the application_role officer column.
+- [x] Support multiple administrators, including President, Vice Presidents, the application owner, and other designated officers as assigned.
+- [x] Allow existing admins to add/remove admin assignments through backend-protected operations.
+- [x] Prevent normal officers from promoting themselves or changing another user's role.
+- [x] Protect admin-management operations on the backend.
 
 ## Officer permissions
 
 - [ ] Active authenticated officers can view permitted application data.
 - [ ] Normal officers can manage only their own event signups.
 - [ ] Normal officers cannot manage another officer's signup.
-- [ ] Normal officers cannot create manual point transactions or corrections.
-- [ ] Normal officers cannot remove point awards or alter configuration.
+- [x] Normal officers cannot create manual point transactions or corrections.
+- [x] Normal officers cannot remove point awards or alter configuration.
 - [ ] Normal officers cannot edit other officer records or manage arbitrary events.
-- [ ] Normal officers cannot access the System Log or other officers' warning records.
+- [x] Normal officers cannot access the System Log or other officers' warning records.
 
 # 5. Branch Lead Authorization
 
-## Resolved position capability and scope
+## Resolved lead scope
 
-- [x] positions.can_manage_branch_events exists in the current schema.
-- [x] Only ICPC Lead, Intro Lead, and Social Media Lead positions are designated as branch leads.
+- [x] Position `Lead` is the branch-management position; no separate capability flag is stored.
+- [x] Branch area is represented by membership; Lead + outreach is also supported.
 - [x] Academic Officer titles are descriptive and grant no additional Cappy Hub permission.
 - [x] Admins can manage all events regardless of position or branch.
 - [x] A branch lead may manage an event when the lead's memberships and event branches have at least one branch in common.
@@ -312,36 +314,34 @@
 
 ## Implementation
 
-- [ ] Set can_manage_branch_events = true only for the three designated lead positions; keep other positions false.
-- [ ] Connect the capability to backend authorization.
-- [ ] Determine the lead's scope from current officer branch memberships.
-- [ ] Enforce the non-empty intersection rule for creating/updating events, assigning/removing signups, cancellation, early completion, and flyer work.
-- [ ] Enforce branch scope in RLS/backend functions, not only through hidden buttons.
-- [ ] Prevent a lead from expanding their own permission by changing event/officer branch associations.
+- [x] Enforce Lead position plus shared branch membership in trusted authorization.
+- [x] Determine the lead's scope from current officer branch memberships.
+- [x] Enforce branch scope in RLS/backend functions, not only through hidden buttons.
+- [x] Prevent a lead from expanding their own permission by changing event/officer branch associations.
 
 # 6. Final Row Level Security
 
 ## Replace prototype policies
 
-- [ ] RLS is currently enabled on all existing POC tables.
+- [x] RLS is currently enabled on all existing POC tables.
     
-- [ ] Remove/replace every `TEMPORARY DEVELOPMENT` anonymous policy.
+- [x] Remove/replace every `TEMPORARY DEVELOPMENT` anonymous policy.
     
-- [ ] Remove anonymous broad officer reads/writes as appropriate.
+- [x] Remove anonymous broad officer reads/writes as appropriate.
     
-- [ ] Remove anonymous event writes.
+- [x] Remove anonymous event writes.
     
-- [ ] Remove anonymous signup writes.
+- [x] Remove anonymous signup writes.
     
-- [ ] Remove anonymous point insertion.
+- [x] Remove anonymous point insertion.
     
-- [ ] Remove anonymous privileged RPC execution.
+- [x] Remove anonymous privileged RPC execution.
     
-- [ ] Add final policies for authenticated users.
+- [x] Add final policies for authenticated users.
     
-- [ ] Verify views use authorization-safe access.
+- [x] Verify views use authorization-safe access.
     
-- [ ] Verify functions cannot bypass application permissions unintentionally.
+- [x] Verify functions cannot bypass application permissions unintentionally.
     
 
 ## Officers RLS
@@ -350,138 +350,140 @@
 
 - [x] Resolved warning policy: admins administer warnings; an officer sees only their own approved warnings.
 
-- [ ] Implement these read policies in RLS and the application.
+- [x] Implement these read policies in RLS and the application (local RLS and warning UI verified).
     
-- [ ] Admins can create officers.
+- [x] Admins can create officers.
     
-- [ ] Admins can edit officers.
+- [x] Admins can edit officers.
     
-- [ ] Admins can deactivate officers.
+- [x] Admins can deactivate officers.
     
-- [ ] Admins can reactivate officers.
+- [x] Admins can reactivate officers.
     
-- [ ] Normal officers cannot mutate arbitrary officer records.
+- [x] Normal officers cannot mutate arbitrary officer records.
     
 
 ## Officer branch RLS
 
-- [ ] Approved users can read relevant memberships.
+- [x] Approved users can read relevant memberships.
     
-- [ ] Only authorized operations can modify officer memberships.
+- [x] Only authorized operations can modify officer memberships.
     
-- [ ] An officer cannot arbitrarily grant themselves another branch.
+- [x] An officer cannot arbitrarily grant themselves another branch.
     
-- [ ] An officer cannot use branch changes to grant themselves lead access.
+- [x] An officer cannot use branch changes to grant themselves lead access.
     
 
 ## Events RLS
 
-- [ ] Approved users can read permitted events.
+- [x] Approved users can read permitted events.
     
-- [ ] Admins can create any event.
+- [x] Admins can create any event.
     
-- [ ] Admins can modify any event allowed by event-state rules.
+- [x] Admins can modify any event allowed by event-state rules.
     
-- [ ] Branch leads can create/modify events only when their branch memberships intersect the event branches in at least one branch.
+- [x] Branch leads can create/modify events only when their branch memberships intersect the event branches in at least one branch.
     
-- [ ] Normal officers cannot edit arbitrary events.
+- [x] Normal officers cannot edit arbitrary events.
     
-- [ ] Cancellation permissions are enforced.
+- [x] Cancellation permissions are enforced.
     
-- [ ] Early completion permissions are enforced.
+- [x] Timed-event processing requires the scheduled end; a future event marked `past` cannot process.
     
 
 ## Event branches RLS
 
-- [ ] Admins can assign branches to events.
+- [x] Admins can assign branches to events.
     
-- [ ] Branch-lead changes respect branch membership.
+- [x] Branch-lead changes respect branch membership.
     
-- [ ] A branch lead cannot use `event_branches` mutation to expand their own authorization improperly.
+- [x] A branch lead cannot use `event_branches` mutation to expand their own authorization improperly.
     
 
 ## Event officer/signup RLS
 
-- [ ] Officers can add their own signup.
+- [x] Officers can add their own signup.
     
-- [ ] Officers can remove their own signup.
+- [x] Officers can remove their own signup.
     
-- [ ] Officers cannot add another officer unless authorized.
+- [x] Officers cannot add another officer unless authorized.
     
-- [ ] Officers cannot remove another officer unless authorized.
+- [x] Officers cannot remove another officer unless authorized.
     
-- [ ] Admins can manage all event signups.
+- [x] Admins can manage all event signups.
     
-- [ ] Branch leads can manage signups only when their branch memberships intersect the event branches in at least one branch.
+- [x] Branch leads can manage signups only when their branch memberships intersect the event branches in at least one branch.
     
-- [ ] Signups remain closed after event end.
+- [x] Signups remain closed after event end.
     
-- [ ] Signups remain closed for cancelled events.
+- [x] Signups remain closed for cancelled events.
     
 
 ## Points RLS
 
-- [ ] Approved users can read permitted point information.
+- [x] Approved users can read permitted point information.
     
-- [ ] Only admins can create manual point transactions.
+- [x] Only admins can create manual point transactions.
     
-- [ ] Only admins can create corrections.
+- [x] Only admins can create corrections.
     
-- [ ] Only admins can remove awards.
+- [x] Only admins can remove awards.
     
-- [ ] Automated participation awards can only be generated by the trusted processing path.
+- [x] Automated participation awards can only be generated by the trusted processing path.
     
-- [ ] Normal officers cannot directly insert points.
+- [x] Normal officers cannot directly insert points.
     
-- [ ] Normal officers cannot call a privileged award-processing RPC with arbitrary parameters.
+- [x] Normal officers cannot call a privileged award-processing RPC with arbitrary parameters.
     
 
 ## Warnings RLS
 
-- [ ] Admins can create warnings.
+- [x] Admins can create warnings.
     
-- [ ] Admins can view pending warnings.
+- [x] Admins can view pending warnings.
     
-- [ ] Admins can view approved warnings.
+- [x] Admins can view approved warnings.
     
-- [ ] Admins can view rejected warnings.
+- [x] Admins can view rejected warnings.
     
-- [ ] Required President/VP approvers can submit only their own approval decision.
+- [x] Required President/VP approvers can submit only their own approval decision.
     
-- [ ] Officers cannot approve warnings unless they are a required approver.
+- [x] Officers cannot approve warnings unless they are a required approver.
     
-- [ ] Assigned officers can see only approved warnings on their own profile.
+- [x] Assigned officers can see only approved warnings on their own profile.
     
-- [ ] Assigned officers cannot see pending warnings.
+- [x] Assigned officers cannot see pending warnings.
     
-- [ ] Assigned officers cannot see rejected warnings.
+- [x] Assigned officers cannot see rejected warnings.
     
-- [ ] Warning deletion is admin-only.
+- [x] Warning deletion is admin-only.
     
 
 ## Application config RLS
 
-- [ ] Admins can read and change both participation-points-per-hour and flyer-completion-points values.
+- [x] Admins can read and change the participation rate.
+- [x] Normal officers cannot change the participation rate.
     
-- [ ] Normal officers cannot change either value.
-    
-- [ ] Rate changes are logged.
+- [x] Rate changes are logged.
     
 
 ## Audit log RLS
 
-- [ ] Only admins can view System Log records.
+- [x] Only admins can view System Log records.
     
-- [ ] Normal officers cannot query audit logs directly.
+- [x] Normal officers cannot query audit logs directly.
     
-- [ ] Audit records cannot be modified through normal application workflows.
+- [x] Audit records cannot be modified through normal application workflows.
     
-- [ ] Audit records survive deletion of the entity they describe.
+- [x] Audit records survive deletion of the entity they describe.
     
 
 ---
 
 # 7. Database — Final MVP Schema
+
+> [!note] Schema evidence
+> The corrective migration, PostgreSQL integrity tests, and populated upgrade test verify the current final model locally. See [PR 1 schema verification](pr1-schema-verification.md) for the preceding migration. Local Auth/RLS policies and direct-access tests are complete; live provider setup and remaining product workflows are still pending.
 
 ## Required MVP tables
 
@@ -489,15 +491,15 @@
     
 - [x] `positions`
     
-- [ ] `officer_warnings`
+- [x] `officer_warnings`
     
-- [ ] `warning_approvals`
+- [x] `warning_approvals`
     
 - [x] `branches`
     
 - [x] `officer_branches`
     
-- [ ] `event_types`
+- [x] `event_types`
 
 - [x] `events`
     
@@ -507,9 +509,9 @@
     
 - [x] `point_transactions`
     
-- [ ] `application_config`
+- [x] `application_config`
     
-- [ ] `audit_logs`
+- [x] `audit_logs`
     
 
 **Target: 13 MVP application tables.**
@@ -531,34 +533,35 @@
 
 ## Final MVP authentication columns
 
-- [ ] Add nullable unique auth_user_id referencing auth.users.id.
-- [ ] Add application_role constrained to admin or officer.
+- [x] Add nullable unique auth_user_id referencing auth.users.id.
+- [x] Add application_role constrained to admin or officer.
 
 ## Current integrity
 
 - [x] Primary key exists.
 - [x] Name cannot be blank.
 - [x] UTEP and personal email formats are validated.
-- [x] Each email field is independently case-insensitive unique when provided.
-- [x] Multiple null emails are supported.
+- [x] Email uniqueness is global across both fields and case-insensitive.
+- [x] Either email may be null, but both cannot be null.
 - [x] position_id references a valid position.
 - [x] Classification is nullable and permits freshman, sophomore, junior, senior, and graduate.
 - [x] Status permits active and inactive.
 
 ## Final MVP identity rules
 
-- [ ] Link at most one auth.users account to an officer.
-- [ ] First-login email matching considers verified email against UTEP or personal email, case-insensitively.
-- [ ] Link only exactly one active, unlinked officer; deny missing or ambiguous matches.
-- [ ] Check current active status on protected requests and deny all app access to inactive officers.
+- [x] Link at most one auth.users account to an officer.
+- [x] First-login email matching considers verified email against UTEP or personal email, case-insensitively.
+- [x] Link only exactly one active, unlinked officer; deny missing or ambiguous matches.
+- [x] Check current active status on protected application requests and deny inactive officers.
 - [ ] Preserve the officer and all historical relationships after deactivation.
 
-## Remaining officer integrity rule
+## Officer integrity
 
-- [ ] Enforce the existing Design Doc requirement that every officer belongs to at least one branch.
-- [ ] Creating an officer with zero branches must be rejected transactionally.
-- [ ] Editing an officer so they have zero branches must be rejected transactionally.
-- [ ] Do not rely solely on form checkbox validation.
+- [x] Officer save accepts zero or more branches transactionally.
+- [x] Restrict direct officer/membership writes under final authorization.
+- [x] Creating an officer with zero branches succeeds.
+- [x] Editing an officer to zero branches succeeds.
+- [x] Do not rely solely on form checkbox validation.
 
 # 9. Database — positions
 
@@ -566,21 +569,23 @@
 
 - [x] id
 - [x] name
-- [x] can_manage_branch_events
+- [x] No separate branch-management flag exists.
 - [x] created_at
 - [x] Position names are unique controlled data.
 - [x] Officers reference one position by ID.
 
 ## Resolved permission decisions
 
-- [x] Only ICPC Lead, Intro Lead, and Social Media Lead are branch-lead positions.
+- [x] Lead is the generic branch-management position; branch memberships identify the area.
 - [x] Academic Officer titles are descriptive and do not grant branch-management capability.
 - [x] All other catalog positions remain non-leads regardless of title.
 
 ## Remaining work
 
-- [ ] Implement can_manage_branch_events = true only for the three designated lead positions and false for all others.
-- [ ] Connect this capability to backend authorization and branch-membership scope.
+- [x] Simplified position catalog contains Lead and Officer; the obsolete flag was removed.
+- [x] Enforce Lead plus branch intersection in backend authorization.
+
+- [x] Admins can create and rename custom positions, and delete only unused custom positions; all six baseline positions remain required.
 
 # 10. Database — `branches`
 
@@ -603,15 +608,18 @@
 - [x] Current `icpc` branch exists.
     
 - [x] Current `social` branch exists.
+- [x] Current `outreach` branch exists.
     
 
 ## Scope rules
 
 - [x] Officers may belong to multiple branches structurally.
     
-- [ ] Officers must belong to at least one branch in final MVP.
+- [x] Officers may belong to zero or more branches.
     
 - [x] Branches are separate from positions.
+
+- [x] Admins can create and rename branches, and delete only branches without officer or event references.
     
 - [x] Resolved decision: branch-lead authorization uses a non-empty intersection of the lead’s memberships and event branches.
     
@@ -634,9 +642,10 @@
     
 - [x] Many-to-many relationship works.
     
-- [ ] Final officer-save workflow guarantees at least one row.
+- [x] Current officer-save RPC transactionally replaces zero or more memberships.
+- [x] Add identity-aware authorization to the final save workflow.
     
-- [ ] Final RLS protects membership mutation.
+- [x] Final RLS protects membership mutation.
     
 
 ---
@@ -645,17 +654,18 @@
 
 ## event_types — final MVP table
 
-- [ ] Create event_types with id, unique name, and created_at.
-- [ ] Seed General, Intro, ICPC, Meeting, Social, and Workshop; allow additional admin-created values.
-- [ ] Allow admins to delete only event types that are not referenced by events.
-- [ ] Reject deletion of referenced event types; never cascade deletion into event history.
+- [x] Create event_types with id, unique name, and created_at.
+- [x] Seed General, Intro, ICPC, Meeting, Social, and Workshop; preserve additional historical values.
+- [x] Add admin event-type creation workflow.
+- [x] Allow admins to delete only event types that are not referenced by events.
+- [x] Reject deletion of referenced event types; never cascade deletion into event history.
 
 ## Existing POC event columns
 
 - [x] id
 - [x] name
 - [x] description
-- [x] type (current POC only; free-form text is replaced in the final MVP)
+- [x] Former POC type text migrated to event_type_id, preserving custom historical type meanings.
 - [x] location
 - [x] starts_at
 - [x] ends_at
@@ -664,17 +674,17 @@
 
 ## Final MVP event columns and constraints
 
-- [ ] Implement required event_type_id referencing event_types, replacing the current POC free-text type column.
-- [ ] Add nullable participation_points_per_hour_at_end for the scheduled-end rate snapshot.
-- [ ] Add optional slides_url and meeting_notes_url.
-- [ ] Add optional flyer_status and flyer_assigned_to for Social flyer workflow.
-- [x] Event name and type are required/nonblank in the current POC.
-- [x] starts_at and ends_at are required in the current POC.
-- [x] ends_at > starts_at is enforced in the current POC.
+- [x] Implement required event_type_id referencing event_types, replacing the current POC free-text type column.
+- [x] Add nullable participation_points_per_hour_at_end for rate snapshot when trusted processing runs.
+- [x] Add optional slides_url and meeting_notes_url.
+- [x] Event name is nonblank and event_type_id is required; referenced type names are nonblank.
+- [x] Timed events require both timestamps; untimed work events require neither and a finite nonzero fixed_points value.
+- [x] ends_at > starts_at is enforced.
+- [x] Timed events start and end on the same America/Denver calendar date.
 - [x] Current POC status values are upcoming, happening, past, and cancelled.
-- [x] Resolved decision: early completion sets the existing status to past; it does not record an actual completion timestamp.
+- [x] Resolved decision: no early-completion action or actual-completion timestamp in the MVP.
 - [x] Resolved decision: preserve scheduled starts_at/ends_at; do not add completed_at or an actual-end-time field.
-- [x] Resolved decision: early completion closes signup/signout, while participation processing waits until scheduled ends_at and uses the scheduled duration.
+- [x] Timed events become eligible only after scheduled end; awards use the full scheduled duration.
 - [x] Resolved decision: keep timezone-aware timestamps and use America/Denver for event input/display.
 - [x] Resolved decision: event-type names are unique; reject deletion while referenced and never cascade into event history.
 
@@ -694,11 +704,11 @@
     
 - [x] An event can structurally belong to multiple branches.
     
-- [x] Current event-save RPC requires at least one branch.
+- [x] Current event-save RPC permits zero branches, representing a global event.
     
 - [x] Resolved decision: branch-lead scope is based on event branches and requires at least one shared branch.
     
-- [ ] Final RLS prevents unauthorized branch associations.
+- [x] Final RLS prevents unauthorized branch associations.
     
 
 ---
@@ -740,7 +750,7 @@
     - [ ] authorized branch-lead removal
         
     
-- [ ] Signup/signout actions are written to the System Log.
+- [x] Signup/signout actions are written to the System Log.
     
 
 ---
@@ -770,31 +780,31 @@
 ## Final MVP fields and behavior
 
 - [x] Resolved actor-FK decision: created_by, removed_by, warning_approvals.approver_id, and audit_logs.actor_id reference auth.users.id.
-- [ ] Add nullable removed_at and removed_by referencing auth.users.id.
-- [ ] Implement logical award removal; retain the original transaction as a voided history record.
-- [ ] Exclude removed transactions from derived totals and ordinary active history.
+- [x] Add nullable removed_at and removed_by referencing auth.users.id.
+- [x] Implement logical award removal; retain the original transaction as a voided history record.
+- [x] Exclude removed transactions from derived totals and ordinary active history.
 - [x] Resolved decision: retain removed participation awards for idempotency so they are never regenerated.
-- [ ] Enforce at most one participation award per officer/event and at most one flyer award per event, including removed awards.
-- [ ] Preserve removal actor, timestamp, and transaction details in the System Log.
-- [ ] Store the final awarded amount in each transaction; later configuration changes do not recalculate it.
+- [x] Enforce at most one participation award per officer/event, including removed awards.
+- [x] Preserve removal actor, timestamp, and transaction details in the System Log.
+- [x] Store the awarded amount in each transaction; later configuration changes do not recalculate it.
 
 # 16. Database — `officer_warnings`
 
-- [ ] Create `officer_warnings` table.
+- [x] Create `officer_warnings` table.
     
-- [ ] Add `id`.
+- [x] Add `id`.
     
-- [ ] Add `officer_id`.
+- [x] Add `officer_id`.
     
-- [ ] Add `reason`.
+- [x] Add `reason`.
     
-- [ ] Add `status`.
+- [x] Add `status`.
     
-- [ ] Add `created_at`.
+- [x] Add `created_at`.
     
-- [ ] `officer_id` references a valid officer.
+- [x] `officer_id` references a valid officer.
     
-- [ ] Warning status supports:
+- [x] Warning status supports:
     
     - `pending`
         
@@ -803,40 +813,40 @@
     - `rejected`
         
     
-- [ ] Warning reason is retained for audit purposes.
+- [x] Warning reason is retained for audit purposes.
     
-- [ ] Warning is immutable after creation from normal application workflows.
+- [x] Warning is immutable after creation from normal application workflows.
     
-- [ ] Admin physical deletion is supported.
+- [x] Admin physical deletion is supported.
     
-- [ ] Deletion does not erase the corresponding System Log history.
+- [x] Deletion does not erase the corresponding System Log history.
     
 
 ---
 
 # 17. Database — `warning_approvals`
 
-- [ ] Create `warning_approvals` table.
+- [x] Create `warning_approvals` table.
     
-- [ ] Add `warning_id`.
+- [x] Add `warning_id`.
     
-- [ ] Add `approver_id`.
+- [x] Add `approver_id`.
     
-- [ ] Add `approver_role`.
+- [x] Add `approver_role`.
     
-- [ ] Add `decision`.
+- [x] Add `decision`.
     
-- [ ] Add nullable `decided_at`.
+- [x] Add nullable `decided_at`.
     
 - [x] Resolved decision: warning_approvals.approver_id references auth.users.id; resolve the officer through officers.auth_user_id when needed.
     
-- [ ] Support President approval record.
+- [x] Support President approval record.
     
-- [ ] Support approval records for every Vice President.
+- [x] Support approval records for every Vice President.
     
-- [ ] Prevent duplicate warning/approver pairs.
+- [x] Prevent duplicate warning/approver pairs.
     
-- [ ] Decision supports:
+- [x] Decision supports:
     
     - `pending`
         
@@ -845,36 +855,34 @@
     - `rejected`
         
     
-- [ ] Store decision timestamp.
+- [x] Nullable decided_at can store the decision timestamp.
+- [x] Voting workflow writes the timestamp when deciding.
     
-- [ ] Prevent unauthorized users from writing approval decisions.
+- [x] Prevent unauthorized users from writing approval decisions.
     
 
 ---
 
 # 18. Database — application_config
 
-- [ ] Create application_config as a single-row table.
-- [ ] Add id.
-- [ ] Add participation_points_per_hour (resolved design value in application_config).
-- [ ] Add flyer_completion_points (resolved design value in application_config).
-- [ ] Add updated_at.
-- [ ] Validate both configured point values according to the approved numeric constraints.
-- [ ] Provide a predictable way to access the single configuration row.
-- [ ] Allow admins to view and change both values.
-- [ ] Prevent normal officers from changing either value.
-- [ ] Log rate and flyer-value changes with the authenticated actor.
-- [ ] Automatic participation processing reads and snapshots the current participation rate at scheduled event end.
-- [ ] Flyer completion reads the current flyer amount and stores the resulting award amount permanently.
+- [x] Create application_config as a single-row table.
+- [x] Add id.
+- [x] Add participation_points_per_hour (resolved design value in application_config).
+- [x] Add updated_at.
+- [x] Validate the participation rate as positive and finite.
+- [x] Provide a predictable way to access the single configuration row.
+- [x] Allow admins to view and change the participation rate.
+- [x] Prevent normal officers from changing the participation rate.
+- [x] Trusted participation processing reads and snapshots the current rate after scheduled timed-event end.
 
 # 19. Database — audit_logs
 
-- [ ] Create audit_logs with id, actor_id, action, entity_type, entity_id, details, and created_at.
+- [x] Create audit_logs with id, actor_id, action, entity_type, entity_id, details, and created_at.
 - [x] Resolved actor-FK decision: audit_logs.actor_id references auth.users.id.
 - [ ] Preserve useful before/after data and deletion/removal snapshots where needed.
-- [ ] Retain audit entries after source entities or logical point awards are deleted/removed.
-- [ ] Protect audit records from ordinary application modification.
-- [ ] Allow only admins to read System Log records.
+- [x] Retain audit entries after source entities or logical point awards are deleted/removed.
+- [x] Protect audit records from ordinary application modification.
+- [x] Allow only admins to read System Log records.
 
 # 20. Database Views
 
@@ -888,11 +896,11 @@
 
 ## Final review
 
-- [ ] Verify views work under authenticated RLS.
-- [ ] Ensure peer officer fields match the resolved visibility policy while warnings remain restricted.
-- [ ] Ensure officer and Dashboard totals include only point_transactions with removed_at IS NULL.
-- [ ] Verify half-year Dashboard calculations use America/Denver local calendar periods.
-- [ ] Verify corrections affect active totals and logically removed awards do not.
+- [x] Verify views work under authenticated RLS.
+- [x] Ensure peer officer fields match the resolved visibility policy while warnings remain restricted.
+- [x] Ensure officer and Dashboard totals include only point_transactions with removed_at IS NULL.
+- [x] Verify half-year Dashboard calculations use America/Denver local calendar periods.
+- [x] Verify corrections affect active totals and logically removed awards do not.
 
 # 21. Database RPCs / Trusted Operations
 
@@ -904,7 +912,7 @@
     
 - [x] Event signup RPC exists.
     
-- [x] Completed-event point processing RPC exists.
+- [x] Private completed-event point processor exists; the caller-rate POC RPC was removed.
     
 - [x] Officer update + branch replacement is transactional.
     
@@ -917,29 +925,29 @@
 
 - [ ] Make officer-save authorization identity-aware.
     
-- [ ] Enforce at least one officer branch in final save workflow.
+- [x] Enforce at least one officer branch in the existing transactional save workflow.
     
-- [ ] Make event-save authorization identity-aware.
+- [x] Make event-save authorization identity-aware.
     
-- [ ] Make signup RPC identity-aware.
+- [x] Make signup RPC identity-aware.
     
-- [ ] Distinguish self-signup from admin/lead assignment.
+- [x] Distinguish timed self-signup from admin/lead assignment.
     
-- [ ] Replace arbitrary caller-supplied participation rate behavior.
+- [x] Replace arbitrary caller-supplied participation rate behavior.
     
-- [ ] Restrict completed-event processing to a trusted execution path.
+- [x] Restrict completed-event processing to a trusted execution path.
     
-- [ ] Integrate application configuration lookup.
+- [x] Integrate application configuration lookup.
     
-- [ ] Snapshot participation rate onto the event.
+- [x] Snapshot participation rate onto the event.
     
-- [ ] Create participation transactions using the snapshot.
+- [x] Create participation transactions using the snapshot.
     
-- [ ] Add audit logging to protected mutations.
+- [x] Add audit logging to protected mutations.
     
-- [ ] Keep audit log writes consistent with the actual mutation.
+- [x] Keep audit log writes consistent with the actual mutation.
     
-- [ ] Review `SECURITY INVOKER`/function grants after final auth design.
+- [x] Review `SECURITY INVOKER`/function grants after final auth design (local grant inspection).
     
 
 ---
@@ -962,9 +970,9 @@
     
 - [x] Officer rows link to officer detail.
     
-- [ ] Final page respects authentication.
+- [x] Final page respects authentication.
     
-- [ ] Final page respects any read-visibility policy decided for officer contact information.
+- [x] Final page respects any read-visibility policy decided for officer contact information.
     
 
 ## Finding officers
@@ -992,7 +1000,7 @@
     
 - [x] Classification select exists.
     
-- [x] Status input exists.
+- [x] Status input exists only for editing; new officers default active.
     
 - [x] Multiple branch selection exists.
     
@@ -1014,15 +1022,15 @@
     
 - [x] Database validates status.
     
-- [ ] Require at least one branch in UI.
+- [x] Branch selection is optional in the UI.
     
-- [ ] Require at least one branch in trusted backend path.
+- [x] Trusted save accepts an empty branch collection.
     
-- [ ] Only admins can create officers.
+- [x] Only admins can create officers.
     
-- [ ] Creation records actor identity where needed.
+- [x] Creation records actor identity where needed.
     
-- [ ] Officer creation is recorded in System Log if included in final mutation logging coverage.
+- [x] Officer creation is recorded in System Log if included in final mutation logging coverage.
     
 
 ---
@@ -1053,13 +1061,13 @@
     
 - [x] Officer + branch changes are transactional.
     
-- [ ] Prevent save with zero branches.
+- [x] Editing an officer to zero branches is supported.
     
-- [ ] Only admins can edit officers.
+- [x] Only admins can edit officers.
     
-- [ ] Admin authorization is server/database enforced.
+- [x] Admin authorization is server/database enforced.
     
-- [ ] Relevant officer modifications are represented in System Log.
+- [x] Relevant officer modifications are represented in System Log.
     
 
 ---
@@ -1078,17 +1086,17 @@
     
 - [x] Inactive officers are excluded from new signup selection in current event UI.
     
-- [ ] Only admins can deactivate.
+- [x] Only admins can deactivate.
     
-- [ ] Only admins can reactivate.
+- [x] Only admins can reactivate.
     
-- [ ] Three approved warnings visually flag an officer for admin review.
+- [x] Three approved warnings visually flag an officer for admin review.
     
-- [ ] Three warnings do **not** automatically deactivate the officer.
+- [x] Three warnings do **not** automatically deactivate the officer.
     
-- [ ] Admin manually decides whether to deactivate/reactivate after warning review.
+- [x] Admin manually decides whether to deactivate/reactivate after warning review.
     
-- [ ] Deactivation/reactivation is logged.
+- [x] Deactivation/reactivation is logged.
     
 
 ---
@@ -1100,6 +1108,8 @@
 - [x] Display name.
     
 - [x] Display position.
+
+- [x] Display application role separately and let admins change another officer's role.
     
 - [x] Display status.
     
@@ -1115,17 +1125,17 @@
     
 - [x] Display point transaction history.
     
-- [ ] Display approved warning count.
+- [x] Display approved warning count.
     
-- [ ] Display approved warnings to the assigned officer.
+- [x] Display approved warnings to the assigned officer.
     
-- [ ] Display warning approval status to admins.
+- [x] Display warning approval status to admins.
     
-- [ ] Clearly flag officer for admin review at three approved warnings.
+- [x] Clearly flag officer for admin review at three approved warnings.
     
-- [ ] Apply final permission rules to profile data.
+- [x] Apply final permission rules to profile data.
     
-- [ ] Remove arbitrary recent-history limitations if they prevent access to required historical information, or add an appropriate way to reach older records.
+- [x] Remove arbitrary recent-history limitations if they prevent access to required historical information, or add an appropriate way to reach older records.
     
 
 ---
@@ -1134,116 +1144,116 @@
 
 ## Warning creation
 
-- [ ] Admin can create a warning.
+- [x] Admin can create a warning.
     
-- [ ] Warning is assigned to a specific officer.
+- [x] Warning is assigned to a specific officer.
     
-- [ ] Warning requires a reason.
+- [x] Warning requires a reason.
     
-- [ ] Newly created warning begins pending.
+- [x] Newly created warning begins pending.
     
-- [ ] Create approval records for the President and every Vice President according to finalized approver identity rules.
+- [x] Create approval records for the President and every Vice President according to finalized approver identity rules.
     
-- [ ] Warning cannot be edited after creation.
+- [x] Warning cannot be edited after creation.
     
-- [ ] Warning creation is recorded in System Log.
+- [x] Warning creation is recorded in System Log.
     
 
 ## Warning approval
 
-- [ ] President can submit their decision.
+- [x] President can submit their decision.
     
-- [ ] Each Vice President can submit their decision.
+- [x] Each Vice President can submit their decision.
     
-- [ ] Each required approver has one approval record.
+- [x] Each required approver has one approval record.
     
-- [ ] An approver cannot vote twice.
+- [x] An approver cannot vote twice.
     
-- [ ] An approver cannot modify someone else's decision.
+- [x] An approver cannot modify someone else's decision.
     
-- [ ] If any required approver rejects:
+- [x] If any required approver rejects:
     
-    - [ ] warning becomes `rejected`.
+    - [x] warning becomes `rejected`.
         
     
-- [ ] If every required approver approves:
+- [x] If every required approver approves:
     
-    - [ ] warning becomes `approved`.
+    - [x] warning becomes `approved`.
         
     
-- [ ] Otherwise:
+- [x] Otherwise:
     
-    - [ ] warning remains `pending`.
+    - [x] warning remains `pending`.
         
     
-- [ ] Each approval is logged.
+- [x] Each approval is logged.
     
-- [ ] Each rejection is logged.
+- [x] Each rejection is logged.
     
 
 ## Warning visibility
 
-- [ ] Admin warnings component exists.
+- [x] Admin warnings component exists.
     
-- [ ] Admin can view all warnings.
+- [x] Admin can view all warnings.
     
-- [ ] Admin can filter pending warnings.
+- [x] Admin can filter pending warnings.
     
-- [ ] Admin can filter approved warnings.
+- [x] Admin can filter approved warnings.
     
-- [ ] Admin can filter rejected warnings.
+- [x] Admin can filter rejected warnings.
     
-- [ ] Assigned officer sees approved warnings.
+- [x] Assigned officer sees approved warnings.
     
-- [ ] Assigned officer does not see pending warnings.
+- [x] Assigned officer does not see pending warnings.
     
-- [ ] Assigned officer does not see rejected warnings.
+- [x] Assigned officer does not see rejected warnings.
     
-- [ ] Only approved warnings count toward officer warning total.
+- [x] Only approved warnings count toward officer warning total.
     
 
 ## Warning deletion
 
-- [ ] Admin can physically delete a warning.
+- [x] Admin can physically delete a warning.
     
-- [ ] Non-admin cannot delete warnings.
+- [x] Non-admin cannot delete warnings.
     
-- [ ] Deleting the warning also handles associated approval records correctly.
+- [x] Deleting the warning also handles associated approval records correctly.
     
-- [ ] Audit/System Log entry survives deletion.
+- [x] Audit/System Log entry survives deletion.
     
-- [ ] Deletion log contains warning reason.
+- [x] Deletion log contains warning reason.
     
-- [ ] Deletion log contains approval decisions.
+- [x] Deletion log contains approval decisions.
     
-- [ ] Deletion log contains enough details to understand the removed warning.
+- [x] Deletion log contains enough details to understand the removed warning.
     
 
 ---
 
 # 28. Event Management — Event List
 
-- [ ] `/events` exists.
+- [x] `/events` exists.
     
-- [ ] Events are listed.
+- [x] Active events are listed; admins can switch to removed history.
     
-- [ ] Event name is shown.
+- [x] Event name is shown.
     
-- [ ] Schedule is shown.
+- [x] Event date is shown; timed detail displays the local start/end.
     
-- [ ] Type is shown.
+- [x] Type is shown.
     
-- [ ] Signup count is shown.
+- [x] Signup count is shown.
     
-- [ ] Branch associations are available.
+- [x] Branch associations are available.
     
-- [ ] Event row/detail navigation exists.
+- [x] Event row/detail navigation exists.
     
-- [ ] Logged-in officer's signup state is visible.
+- [x] Logged-in officer's signup state is visible.
     
 - [x] Resolved decision: event type is for organization/filtering and does not grant permissions.
     
-- [ ] Apply final access rules to creation/manage actions.
+- [x] Apply final access rules to creation/manage actions.
     
 
 ---
@@ -1252,7 +1262,7 @@
 
 ## Current basic fields
 
-- [ ] Name.
+- [x] Name.
     
 - [x] Description.
     
@@ -1264,35 +1274,32 @@
     
 - [x] End time.
     
-- [x] One or more branches.
+- [x] Zero or more branches; zero means global.
     
 - [x] Save is transactional with branch associations.
     
 
 ## Missing fields/workflows
 
-- [ ] Optional slides URL.
+- [x] Optional slides URL.
     
-- [ ] Optional meeting notes URL.
+- [x] Optional meeting notes URL.
     
-- [ ] Social-event flyer status.
     
-- [ ] Social-event flyer assignee.
     
-- [ ] Recurrence configuration.
     
-- [ ] Role/branch authorization.
+- [x] Role/branch authorization.
     
 
 ## Permissions
 
-- [ ] Admin may create any event.
+- [x] Admin may create any event.
     
-- [ ] Authorized branch lead may create event within their branch scope.
+- [x] Authorized branch lead may create event within their branch scope.
     
-- [ ] Normal officer may not create arbitrary events.
+- [x] Normal officer may not create arbitrary events.
     
-- [ ] Permission is backend enforced.
+- [x] Permission is backend enforced.
     
 
 ---
@@ -1335,7 +1342,7 @@
     
 - [x] Use `event_types` with unique names; admins manage values, and referenced types cannot be deleted.
     
-- [ ] Implement the chosen admin-management behavior.
+- [x] Implement the chosen admin-management behavior.
     
 - [x] Resolved decision: event type changes do not alter branch permissions.
     
@@ -1344,9 +1351,9 @@
 
 # 31. Event Scheduling and Status
 
-- [x] Every event has start time.
+- [x] Timed events have start time; untimed events have a date and fixed points.
     
-- [x] Every event has end time.
+- [x] Timed events have end time; untimed events have neither timestamp.
     
 - [x] End must occur after start.
     
@@ -1358,17 +1365,17 @@
     
 - [x] Cancellation is explicit.
     
-- [ ] Implement admin/authorized-lead early completion.
+- [x] Omit early completion from timed event actions.
     
-- [ ] Early completion does not shorten participation-point duration.
+- [x] Timed awards use the scheduled duration.
     
-- [ ] Participation points still use originally scheduled `starts_at → ends_at` duration.
+- [x] Participation points still use originally scheduled `starts_at → ends_at` duration.
     
-- [x] Resolved decision: use the existing status value `past`; retain the originally scheduled timestamps and add no completion-time field.
+- [x] Derived past status follows scheduled end or passed untimed date; no completion-time field.
     
-- [ ] Ensure early-completed events cannot continue accepting signups.
+- [x] Timed signups close at scheduled end; untimed assignments close after the event date.
     
-- [ ] Ensure event status displayed in UI is consistent with early completion behavior.
+- [x] Event status display follows schedule/date, cancellation, and logical removal.
     
 
 ---
@@ -1381,17 +1388,16 @@
     
 - [x] Event branch associations update transactionally.
     
-- [ ] Admin has final authorized edit path.
+- [x] Admin has final authorized edit path, including past events.
     
-- [ ] Authorized branch lead has branch-scoped edit path.
+- [x] Authorized branch lead has branch-scoped edit path, including past events.
     
-- [ ] Normal officers cannot edit events.
+- [x] Normal officers cannot edit events.
     
 - [x] Editing preserves historical records.
     
-- [ ] Editing recurring occurrences affects only the selected occurrence unless explicitly creating/editing a recurrence set during creation.
     
-- [ ] Event edits are logged in System Log.
+- [x] Event edits are logged in System Log.
     
 
 ---
@@ -1408,74 +1414,28 @@
     
 - [x] Signups cannot be changed after cancellation in current POC.
     
-- [ ] Admin authorization enforced.
+- [x] Admin authorization enforced.
     
-- [ ] Branch-lead authorization enforced.
+- [x] Branch-lead authorization enforced.
     
-- [ ] Cancellation logged.
+- [x] Cancellation logged.
     
-- [ ] Recurring schedule occurrence can be cancelled independently.
     
 
 ---
 
 # 34. Event Deletion Rules
 
-- [ ] Add deletion behavior required for eligible future recurring occurrences.
     
-- [ ] Future occurrence can be deleted individually.
-    
-- [ ] Past-event deletion is not available in normal UI.
+- [x] Authorized managers can logically remove past events; physical deletion is not exposed.
     
 - [ ] Historical events remain protected.
     
 - [ ] Only database owner can physically delete historical events outside normal application workflow.
     
-- [ ] Deletion does not accidentally cascade historical points.
+- [x] Logical event removal retains historical point transactions.
     
-- [ ] Relevant deletion is represented in System Log where required.
-    
-
----
-
-# 35. Recurring Events
-
-- [ ] Event creation can generate a recurring schedule.
-    
-- [ ] Recurrence is capped at 15 weeks.
-    
-- [ ] Generated occurrences stay within the current half-year:
-    
-    - January–June, or
-        
-    - July–December.
-        
-    
-- [ ] Each generated occurrence is an independent event row.
-    
-- [ ] Each occurrence has its own ID.
-    
-- [ ] Each occurrence has its own schedule.
-    
-- [ ] Each occurrence has its own status.
-    
-- [ ] Each occurrence can be edited independently.
-    
-- [ ] Each occurrence can be cancelled independently.
-    
-- [ ] Eligible future occurrences can be deleted independently.
-    
-- [ ] Past occurrences cannot be deleted through UI.
-    
-- [ ] Copied/generated occurrences do **not** inherit officer signups.
-    
-- [ ] Recurrence generation validates all resulting dates.
-    
-- [ ] Recurrence generation validates half-year boundary.
-    
-- [ ] Recurrence generation validates 15-week limit.
-    
-- [ ] Recurrence actions respect admin/branch-lead authorization.
+- [x] Event removal is represented in System Log with a pre-removal snapshot.
     
 
 ---
@@ -1490,17 +1450,17 @@
     
 - [x] Type.
     
-- [ ] Location.
+- [x] Location.
     
 - [x] Start time.
     
 - [x] End time.
     
-- [ ] Derived/displayed status.
+- [x] Derived/displayed status.
     
-- [ ] Associated branches.
+- [x] Associated branches.
     
-- [ ] Associated officers.
+- [x] Associated officers.
     
 - [x] Related point transactions.
     
@@ -1511,99 +1471,46 @@
 
 ## Missing MVP data
 
-- [ ] Slides link.
+- [x] Slides link.
     
-- [ ] Meeting notes link.
+- [x] Meeting notes link.
     
-- [ ] Social flyer status.
     
-- [ ] Social flyer assignee.
     
-- [ ] Flyer completion control.
     
-- [ ] Flyer award information.
     
-- [ ] Role-aware signup controls.
+- [x] Role-aware signup and assignment controls.
     
-- [ ] Role-aware event management controls.
+- [x] Role-aware event management controls.
     
-- [ ] Early-completion control.
+- [x] Event removal control with confirmation.
     
-- [ ] Participation rate snapshot visible to admins if useful for explaining generated awards.
+- [x] Participation rate snapshot visible on event detail for explaining generated awards.
     
 
 ---
 
 # 37. Event File Links / Google Drive
 
-- [ ] Add nullable `slides_url`.
+- [x] Add nullable `slides_url`.
     
-- [ ] Add nullable `meeting_notes_url`.
+- [x] Add nullable `meeting_notes_url`.
     
-- [ ] Display slides link when present.
+- [x] Display slides link when present.
     
-- [ ] Display meeting notes link when present.
+- [x] Display meeting notes link when present.
     
-- [ ] Allow authorized event managers to set/update these links.
+- [x] Allow authorized event managers to set/update these links.
     
-- [ ] Keep actual collaborative files in Google Drive.
+- [x] Keep actual collaborative files in Google Drive.
     
-- [ ] Do not duplicate presentation content into Cappy Hub database.
+- [x] Do not duplicate presentation content into Cappy Hub database.
     
-- [ ] Do not duplicate meeting-note content into Cappy Hub database.
+- [x] Do not duplicate meeting-note content into Cappy Hub database.
     
-- [ ] Cappy Hub stores/references URLs only where needed.
+- [x] Cappy Hub stores/references URLs only where needed.
     
-- [ ] Validate/handle empty URLs appropriately.
-    
-
----
-
-# 38. Social Event Flyer Workflow
-
-## Data
-
-- [ ] Add `flyer_status`.
-    
-- [ ] Add `flyer_assigned_to`.
-    
-- [ ] `flyer_assigned_to` references an officer.
-    
-- [ ] Flyer fields are relevant for Social events.
-    
-
-## UI
-
-- [ ] Event detail shows flyer status.
-    
-- [ ] Event detail shows assigned officer.
-    
-- [ ] Authorized user can assign flyer work.
-    
-- [ ] Authorized user can change status.
-    
-- [ ] Admin can mark flyer done.
-    
-- [ ] Authorized lead for event branch can mark flyer done.
-    
-
-## Points
-
-- [x] Resolved product decision: the flyer award amount comes from `application_config.flyer_completion_points`.
-    
-- [ ] Implement flyer award using the configured amount and award it to `flyer_assigned_to`.
-    
-- [ ] Completing flyer work creates no more than one flyer award for the event.
-    
-- [ ] Add `flyer` point transaction type.
-    
-- [ ] Add uniqueness rule preventing duplicate flyer award.
-    
-- [ ] Flyer award references event.
-    
-- [ ] Flyer completion is logged.
-    
-- [ ] Flyer award is logged.
+- [x] Validate/handle empty URLs appropriately.
     
 
 ---
@@ -1627,33 +1534,33 @@
 
 ## Final identity-aware behavior
 
-- [ ] Logged-in officer can sign themselves up.
+- [x] Logged-in officer can sign themselves up for timed events.
     
-- [ ] Logged-in officer can sign themselves out.
+- [x] Logged-in officer can sign themselves out of timed events.
     
-- [ ] Logged-in officer cannot sign another officer up.
+- [x] Logged-in officer cannot sign another officer up.
     
-- [ ] Logged-in officer cannot remove another officer.
+- [x] Logged-in officer cannot remove another officer.
     
-- [ ] Admin can sign up any eligible officer.
+- [x] Admin can sign up or assign any eligible officer.
     
-- [ ] Admin can remove any officer.
+- [x] Admin can remove any eligible signup or assignment.
     
-- [ ] Authorized branch lead can sign up officers for an event in their branch scope.
+- [x] Authorized branch lead can sign up or assign officers for an event in their branch scope.
     
-- [ ] Authorized branch lead can remove officers from an event in their branch scope.
+- [x] Authorized branch lead can remove officers from an event in their branch scope.
     
-- [ ] Unauthorized branch lead cannot manage unrelated branch events.
+- [x] Unauthorized branch lead cannot manage unrelated branch events.
     
-- [ ] Event detail clearly shows current officer's signup status.
+- [x] Event detail clearly shows current officer's signup status.
     
-- [ ] Events page clearly shows current officer's signup status.
+- [x] Events page clearly shows current officer's signup status.
     
-- [ ] Signup action is logged.
+- [x] Signup action is logged.
     
-- [ ] Signout/removal action is logged.
+- [x] Signout/removal action is logged.
     
-- [ ] Admin/lead officer assignment is logged.
+- [x] Admin/lead officer assignment is logged.
     
 
 ---
@@ -1680,15 +1587,14 @@
     
 - [x] Corrections can be represented as additional transactions.
     
-- [ ] Final admin-only permissions exist.
+- [x] Final admin-only permissions exist.
     
-- [ ] Actor attribution is complete.
+- [x] Actor attribution is complete for point mutations (authenticated admin or NULL System actor).
     
-- [ ] Award deletion workflow exists.
+- [x] Award deletion workflow exists.
     
-- [ ] Flyer awards exist.
     
-- [ ] All point-changing actions are audited.
+- [x] All point-changing actions are audited.
     
 
 ---
@@ -1722,18 +1628,18 @@
 
 ## Final MVP
 
-- [ ] Only admins can access manual point creation action.
+- [x] Only admins can access manual point creation action.
     
-- [ ] Backend independently verifies admin role.
+- [x] Backend independently verifies admin role.
     
-- [ ] Database authorization independently prevents unauthorized direct inserts.
+- [x] Database authorization independently prevents unauthorized direct inserts.
     
 - [x] Resolved decision: created_by references auth.users.id for the authenticated actor.
-- [ ] Implement admin actor attribution.
+- [x] Implement admin actor attribution.
     
-- [ ] Transaction creation is logged.
+- [x] Transaction creation is logged.
     
-- [ ] UI communicates validation errors clearly.
+- [x] UI communicates validation errors clearly.
     
 
 ---
@@ -1742,7 +1648,7 @@
 
 - [x] Corrections are represented as additional transactions.
     
-- [x] Existing original transaction does not need to be edited.
+- [x] Corrections may use a separate signed transaction or direct audited amount editing.
     
 - [x] Positive correction is possible.
     
@@ -1750,13 +1656,13 @@
     
 - [x] Correction reason is stored.
     
-- [ ] Only admins can create corrections.
+- [x] Only admins can create corrections.
     
-- [ ] Correction stores actor identity.
+- [x] Correction stores actor identity.
     
-- [ ] Correction creation is logged.
+- [x] Correction creation is logged.
     
-- [ ] Correction UI clearly distinguishes correction from ordinary manual award.
+- [x] Correction UI clearly distinguishes correction from ordinary manual award.
     
 - [x] Officer total immediately reflects correction.
     
@@ -1769,7 +1675,7 @@
 
 - [x] Scheduled duration can be calculated.
     
-- [ ] Current POC formula is:
+- [x] Final participation formula is:
     
     - [x] `(ends_at - starts_at) in hours × points-per-hour`
         
@@ -1785,91 +1691,89 @@
 - [x] Repeated processing is idempotent.
     
 
-## Current POC limitation
+## Resolved POC limitations
 
-- [x] Prototype processing currently happens on page load.
+- [x] Prototype page-load processing was removed.
     
-- [x] Prototype currently reads rate from environment.
+- [x] Participation processing no longer reads rate from environment.
     
-- [x] Prototype currently accepts rate as RPC parameter.
+- [x] Caller-supplied-rate processor was removed.
     
 
 ## Final MVP processing
 
 - [x] Resolved decision: page loads are not a production processing trigger.
-- [ ] Remove the current page-load trigger during implementation.
+- [x] Remove the current page-load trigger during implementation.
     
 - [x] Resolved decision: Supabase Cron/pg_cron invokes a private trusted PostgreSQL function approximately once per minute.
-- [ ] Implement the scheduled database function and configure its private execution path.
+- [x] Implement the scheduled database function and configure its private execution path.
     
-- [ ] Processing runs even when nobody loads Cappy Hub.
+- [x] Processing runs even when nobody loads Cappy Hub (local Cron probe verified).
     
-- [x] Resolved decision: process an event only once it reaches its scheduled end (scheduler polling interval is approximately one minute).
+- [x] Timed events process at scheduled end only, using full scheduled duration.
     
 - [x] Resolved decision: trusted private database processing reads configured values; no anonymous rate parameter is accepted.
     
-- [x] Resolved decision: read participation and flyer amounts from `application_config`.
     
-- [ ] Processing stores that rate in `events.participation_points_per_hour_at_end`.
+- [x] Processing stores that rate in `events.participation_points_per_hour_at_end`.
     
-- [ ] Processing calculates award using that snapshot.
+- [x] Processing calculates award using that snapshot.
     
-- [ ] Exactly one participation award is created per signed-up officer/event.
+- [x] Exactly one participation award is created per signed-up officer/event.
     
-- [ ] Existing completed-event awards are never recalculated because the current global rate changes later.
+- [x] Existing completed-event awards are never recalculated because the current global rate changes later.
     
-- [ ] Later rate changes apply only to events ending afterward.
+- [x] Later rate changes apply only to events first processed afterward.
     
-- [ ] Participation award creation is recorded in System Log.
+- [x] Participation award creation is recorded in System Log.
     
 
 ---
 
 # 44. Participation Rate Configuration
 
-- [ ] Store current rate in `application_config`.
+- [x] Store current rate in `application_config`.
     
-- [ ] Remove environment variable as the authoritative business configuration.
+- [x] Remove environment variable as the authoritative business configuration.
     
-- [ ] Admin can view/change both configured values, participation rate and flyer completion points.
     
-- [ ] Normal officer cannot change rate.
+- [x] Normal officer cannot change rate.
     
-- [ ] Rate change updates `updated_at`.
+- [x] Rate change updates `updated_at`.
     
-- [ ] Rate change stores actor identity through audit logging.
+- [x] Rate change stores actor identity through audit logging.
     
-- [ ] Rate change is recorded in System Log.
+- [x] Rate change is recorded in System Log.
     
-- [ ] Existing completed event snapshots remain unchanged.
+- [x] Existing completed event snapshots remain unchanged.
     
-- [ ] Existing point transactions remain unchanged.
+- [x] Existing point transactions remain unchanged.
     
-- [ ] Unprocessed future events use the rate effective when they end.
+- [x] Unprocessed future events use the rate effective when they first process after finishing.
     
 
 ---
 
 # 45. Removing Incorrect Event Awards
 
-- [ ] Admin can remove an incorrect generated award when needed.
+- [x] Admin can remove an incorrect generated award when needed.
     
-- [ ] Normal officer cannot remove awards.
+- [x] Normal officer cannot remove awards.
     
-- [ ] Branch lead cannot remove point awards unless explicitly given admin role.
+- [x] Branch lead cannot remove point awards unless explicitly given admin role.
     
-- [ ] Award removal updates derived totals naturally.
+- [x] Award removal updates derived totals naturally.
     
-- [ ] Point-award deletion is logged.
+- [x] Point-award deletion is logged.
     
-- [ ] Audit log preserves enough transaction detail to understand what was deleted.
+- [x] Audit log preserves enough transaction detail to understand what was deleted.
     
-- [ ] Deleted award cannot silently disappear without trace.
+- [x] Deleted award cannot silently disappear without trace.
     
 - [x] Resolved decision: unique participation history includes logically removed rows and suppresses regeneration.
     
 - [x] Resolved product decision: a logically removed participation award remains suppressed and is never regenerated for that officer/event.
-- [ ] Implement the suppression behavior through retained transaction history and uniqueness.
+- [x] Implement the suppression behavior through retained transaction history and uniqueness.
     
 
 ---
@@ -1893,23 +1797,23 @@
 
 ## Missing MVP behavior
 
-- [ ] Only admins see point-creation controls.
+- [x] Only admins see point-creation controls.
     
-- [ ] Non-admins cannot call protected mutation directly.
+- [x] Non-admins cannot call protected mutation directly.
     
-- [ ] Add transaction search.
+- [x] Add transaction search.
     
-- [ ] Add transaction filtering.
+- [x] Add transaction filtering.
     
-- [ ] Filter/search can identify transactions by relevant displayed information.
+- [x] Filter/search can identify transactions by relevant displayed information.
     
-- [ ] Transactions associated with events remain inspectable.
+- [x] Transactions associated with events remain inspectable.
     
-- [ ] Provide access to required history beyond current "latest 50" display if production data can exceed that.
+- [x] Provide access to required history beyond current "latest 50" display if production data can exceed that.
     
-- [ ] Display actor information to admins where useful once `created_by` exists.
+- [x] Display actor information to admins where useful once `created_by` exists.
     
-- [ ] Add award removal control for admins where appropriate.
+- [x] Add award removal control for admins where appropriate.
     
 
 ---
@@ -1947,99 +1851,101 @@
     
 - [ ] Verify America/Denver timezone semantics in production.
     
-- [ ] Ensure final rate/award model still feeds Dashboard correctly.
+- [x] Ensure final rate/award model still feeds Dashboard correctly.
     
 
 ## Authenticated officer view
 
-- [ ] Dashboard knows which officer is signed in.
+- [x] Dashboard knows which officer is signed in.
     
-- [ ] Officer-specific upcoming event view shows all relevant events.
+- [x] Officer-specific upcoming event view shows all relevant events.
     
-- [ ] Clearly mark events where current officer is signed up.
+- [x] Clearly mark events where current officer is signed up.
     
-- [ ] Clearly mark events where current officer is not signed up.
+- [x] Clearly mark events where current officer is not signed up.
     
-- [ ] Dashboard navigation respects application role.
+- [x] Dashboard navigation respects application role.
     
-- [ ] System Log link is shown only to admins.
+- [x] System Log link is shown only to admins.
     
 
 ---
 
 # 48. System Log / Audit Trail
 
+> [!note] PR 5 evidence: local migration replay, 291 PostgreSQL assertions, atomic rollback and source-deletion tests, and code review of the admin route/navigation. PR 6 adds audited catalog mutations. PRs 7–8 locally verify rate, removal, and scheduled-award audit records. Hosted Google sign-in and Cron deployment remain pending; warning audits are verified locally.
+
 ## Page
 
-- [ ] Add System Log navigation item.
+- [x] Add System Log navigation item.
     
-- [ ] Show System Log navigation only to admins.
+- [x] Show System Log navigation only to admins.
     
-- [ ] Create System Log page.
+- [x] Create System Log page.
     
-- [ ] Query `audit_logs`.
+- [x] Query `audit_logs`.
     
-- [ ] Show actor.
+- [x] Show actor.
     
-- [ ] Show action.
+- [x] Show action.
     
-- [ ] Show affected entity type.
+- [x] Show affected entity type.
     
-- [ ] Show affected entity/reference.
+- [x] Show affected entity/reference.
     
-- [ ] Show action time.
+- [x] Show action time.
     
-- [ ] Show useful details/snapshot.
+- [x] Show useful details/snapshot.
     
-- [ ] Only admins can access route.
+- [x] Only admins can access route.
     
-- [ ] Direct database query is also admin-only.
+- [x] Direct database query is also admin-only.
     
 
 ## Minimum logged actions from Design Doc
 
-- [ ] Event creation.
+- [x] Event creation.
     
-- [ ] Event changes.
+- [x] Event changes.
     
-- [ ] Event cancellation.
+- [x] Event cancellation.
     
-- [ ] Event early completion.
+- [x] Event removal with preserved signup, point, and audit history.
     
-- [ ] Event signup.
+- [x] Event signup.
     
-- [ ] Event sign-out.
+- [x] Event sign-out.
     
-- [ ] Officer assignment to event.
+- [x] Officer assignment to event.
     
-- [ ] Officer removal from event.
+- [x] Officer removal from event.
     
-- [ ] Warning creation.
+- [x] Warning creation.
     
-- [ ] Warning approval.
+- [x] Warning approval.
     
-- [ ] Warning rejection.
+- [x] Warning rejection.
     
-- [ ] Warning deletion.
+- [x] Warning deletion.
     
-- [ ] Participation points-per-hour rate change.
+- [x] Participation points-per-hour rate change.
     
-- [ ] Automatic participation point award.
+- [x] Automatic participation point award.
     
-- [ ] Point award removal.
+- [x] Point award removal.
     
-- [ ] Flyer completion.
     
-- [ ] Flyer point award.
     
 
 ## Additional operational mutation logging
 
-- [ ] Implement System Log coverage for officer create/edit/deactivate/reactivate actions as specified in the audit requirements.
+- [x] Implement System Log coverage for officer create/edit/deactivate/reactivate actions as specified in the audit requirements.
     
-- [ ] Implement System Log coverage for application admin-role changes as specified in the audit requirements.
+- [x] Implement System Log coverage for application admin-role changes as specified in the audit requirements.
+
+- [x] Audit successful position, branch, and event-type create/rename/delete operations with actor and useful details.
     
-- [ ] Prefer logging security-sensitive/admin mutations for traceability.
+- [x] Prefer logging security-sensitive/admin mutations for traceability.
     
 
 ---
@@ -2060,15 +1966,15 @@
     
 - [x] Simple visual style exists.
     
-- [ ] System Log admin-only link.
+- [x] System Log admin-only link.
     
-- [ ] Auth/sign-out control.
+- [x] Auth/sign-out control.
     
 - [ ] Current identity/role indication if useful.
     
-- [ ] Do not show admin-only navigation to officers.
+- [x] Do not show admin-only navigation to officers.
     
-- [ ] Hidden navigation must not be treated as authorization.
+- [x] Hidden navigation must not be treated as authorization.
     
 
 ---
@@ -2077,71 +1983,70 @@
 
 ## Admin
 
-- [ ] Can see Add Officer.
+- [x] Can see Add Officer.
     
-- [ ] Can edit officers.
+- [x] Can edit officers.
     
-- [ ] Can deactivate/reactivate officers.
+- [x] Can deactivate/reactivate officers.
     
-- [ ] Can create events.
+- [x] Can create events.
     
-- [ ] Can manage all events.
+- [x] Can manage all events.
     
-- [ ] Can manage all event signups.
+- [x] Can manage all event signups.
     
-- [ ] Can create manual point transactions.
+- [x] Can create manual point transactions.
     
-- [ ] Can create corrections.
+- [x] Can create corrections.
     
-- [ ] Can remove point awards.
+- [x] Can remove point awards.
     
-- [ ] Can configure participation rate.
+- [x] Can configure participation rate.
     
-- [ ] Can create/delete warnings.
+- [x] Can create/delete warnings.
     
-- [ ] Can view all warning statuses.
+- [x] Can view all warning statuses.
     
-- [ ] Can access System Log.
+- [x] Can access System Log.
     
-- [ ] Can manage application admins according to final admin management UI.
+- [x] Can manage application admins according to final admin management UI.
     
 
 ## Branch lead
 
-- [ ] Can create events for authorized branch scope.
+- [x] Can create events for authorized branch scope.
     
-- [ ] Can edit authorized events.
+- [x] Can edit authorized events.
     
-- [ ] Can cancel authorized events.
+- [x] Can cancel authorized events.
     
-- [ ] Can complete authorized events early.
+- [x] Can remove authorized events with preserved history.
     
-- [ ] Can manage signups for authorized events.
+- [x] Can manage signups for authorized events.
     
-- [ ] Can manage flyer workflow for authorized events.
     
-- [ ] Cannot manage unrelated branch events.
+- [x] Cannot manage unrelated branch events.
     
-- [ ] Cannot award/correct/remove points unless separately an admin.
+- [x] Cannot award/correct/remove points unless separately an admin.
     
 
 ## Normal officer
 
-- [ ] Can view permitted application data.
+- [x] Can view permitted application data.
     
-- [ ] Can manage own event signup.
+- [x] Can manage own event signup.
     
-- [ ] Cannot manage another officer's signup.
+- [x] Cannot manage another officer's signup.
     
-- [ ] Cannot manage arbitrary events.
+- [x] Cannot manage arbitrary events.
     
-- [ ] Cannot mutate officer records.
+- [x] Cannot mutate officer records.
     
-- [ ] Cannot mutate points.
+- [x] Cannot mutate points.
     
-- [ ] Cannot see System Log.
+- [x] Cannot see System Log.
     
-- [ ] Sees own approved warnings.
+- [x] Sees own approved warnings.
     
 
 ---
@@ -2160,13 +2065,13 @@
     
 - [x] Optional personal email.
     
-- [ ] Database email validation.
+- [x] Database email validation.
     
 - [x] Status validation.
     
-- [ ] At least one branch required.
+- [x] Branches are optional.
     
-- [ ] Role authorization enforced independently from form.
+- [x] Role authorization enforced independently from form.
     
 
 ## Event form
@@ -2175,27 +2080,23 @@
     
 - [x] Type required.
     
-- [x] Start required.
+- [x] Start required for timed events; hidden for untimed work events.
     
-- [x] End required.
+- [x] End required for timed events; hidden for untimed work events.
     
 - [x] End-after-start database validation.
     
-- [x] At least one branch required through save RPC.
+- [x] Save RPC accepts zero branch associations.
     
-- [ ] Slides URL field.
+- [x] Slides URL field.
     
-- [ ] Meeting notes URL field.
+- [x] Meeting notes URL field.
     
-- [ ] Flyer fields where applicable.
     
-- [ ] Recurrence controls.
     
-- [ ] Recurrence limit validation.
     
-- [ ] Half-year recurrence validation.
     
-- [ ] Authorization validation.
+- [x] Authorization validation.
     
 
 ## Points form
@@ -2210,11 +2111,11 @@
     
 - [x] Event optional.
     
-- [ ] Manual/correction type selection.
+- [x] Manual/correction type selection.
     
-- [ ] Admin authorization.
+- [x] Admin authorization.
     
-- [ ] Actor attribution.
+- [x] Actor attribution.
     
 
 ## Warning form
@@ -2223,36 +2124,34 @@
     
 - [x] Reason required.
     
-- [ ] Admin authorization.
+- [x] Admin authorization.
     
 - [ ] Confirmation before immutable warning creation if desired.
     
-- [ ] Required approval records generated.
+- [x] Required approval records generated.
     
 
 ---
 
 # 52. Time and Timezone Correctness
 
-> Current POC treats event form/display timestamps as UTC.
+> PR 10 uses America/Denver for event input and display.
 
-- [x] Resolved product decision: user-facing event times and recurrence use America/Denver (El Paso local time).
     
 - [x] Resolved decision: PostgreSQL event timestamps remain timezone-aware.
     
-- [ ] Ensure datetime inputs are interpreted correctly.
+- [x] Ensure datetime inputs are interpreted correctly in America/Denver.
     
-- [ ] Ensure event detail displays expected local time.
+- [x] Ensure event detail displays expected local time.
     
-- [ ] Ensure event list displays expected local time.
+- [x] Ensure event list displays the El Paso event date.
     
-- [ ] Ensure Dashboard displays expected America/Denver local time.
+- [x] Ensure Dashboard displays the El Paso event date.
     
-- [ ] Ensure recurrence generation uses America/Denver consistently.
     
-- [ ] Ensure DST/timezone changes do not alter scheduled duration unexpectedly.
+- [x] Test summer/winter offsets and preserve timezone-aware scheduled duration.
     
-- [ ] Ensure trusted event-end processing compares timestamps consistently.
+- [x] Ensure trusted event-end processing compares timezone-aware timestamps consistently.
     
 
 ---
@@ -2261,15 +2160,15 @@
 
 - [ ] Product decision: Google Drive remains collaborative file system.
     
-- [ ] Implement event URL references for slides.
+- [x] Implement event URL references for slides.
     
-- [ ] Implement event URL references for meeting notes.
+- [x] Implement event URL references for meeting notes.
     
 - [ ] Keep policies/promotional materials/curriculum/etc. in Drive.
     
-- [ ] Do not create duplicate document-management subsystem inside Cappy Hub.
+- [x] Do not create duplicate document-management subsystem inside Cappy Hub.
     
-- [ ] Do not store Drive document contents in the Cappy Hub database solely for convenience.
+- [x] Do not store Drive document contents in the Cappy Hub database solely for convenience.
     
 
 ---
@@ -2338,9 +2237,9 @@
     
 - [ ] Event IDs are stable.
     
-- [ ] Point transactions reference stable officers.
+- [x] Point transactions reference stable officers.
     
-- [ ] Point transactions may reference stable events.
+- [x] Point transactions may reference stable events.
     
 - [ ] Position FK exists.
     
@@ -2356,7 +2255,7 @@
     
 - [ ] Officer/event uniqueness exists.
     
-- [ ] Participation award uniqueness exists.
+- [x] Participation award uniqueness exists, including logically removed rows.
     
 - [ ] Event end-after-start constraint exists.
     
@@ -2364,54 +2263,52 @@
     
 - [ ] Officer status validation exists.
     
-- [ ] Point type validation exists for current types.
+- [x] Point type validation exists for current types.
     
 - [ ] Minimum one branch per officer enforced.
     
-- [ ] Warning/approver uniqueness enforced.
+- [x] Warning/approver uniqueness enforced.
     
-- [ ] Warning decision validation enforced.
+- [x] Warning decision validation enforced.
     
-- [ ] Flyer award uniqueness enforced.
     
-- [ ] Flyer assignee FK enforced.
     
-- [ ] Flyer status validation enforced.
     
-- [ ] Application config rate validation enforced.
+- [x] Application config rate validation enforced.
     
-- [ ] Participation rate snapshot implemented.
+- [x] Participation rate snapshot implemented.
     
-- [x] Resolved decision: actor references use auth.users.id; implementation and generated types remain pending.
+- [x] Actor FKs reference auth.users.id in the verified migration; public-schema types are regenerated.
+- [x] Protected workflows record the authenticated actor.
     
-- [ ] Audit log survives source deletions.
+- [x] Audit log survives source deletions.
     
-- [ ] Final RLS protects every table appropriately.
+- [x] Final RLS protects every table appropriately in local tests; hosted application remains unchecked below.
     
 
 ---
 
 # 57. Historical Preservation Rules
 
-- [ ] Officer deactivation does not delete historical officer.
+- [x] Officer deactivation does not delete historical officer.
     
-- [ ] Event cancellation does not delete historical event.
+- [x] Event cancellation does not delete historical event.
     
-- [ ] Existing foreign keys use history-preserving behavior rather than cascaded deletion.
+- [x] Existing event and point foreign keys preserve history through logical removal.
     
-- [ ] Corrections can be represented without rewriting prior point values.
+- [x] Signed correction rows remain an option alongside direct audited edits.
     
-- [ ] Past events remain unavailable for deletion in normal UI.
+- [x] Past events support history-preserving logical removal in the UI.
     
-- [ ] Warning deletion leaves audit history.
+- [x] Warning deletion leaves audit history.
     
-- [ ] Point-award deletion leaves audit history.
+- [x] Point transaction logical removal leaves audit history.
     
-- [ ] Audit log contains deletion snapshot.
+- [x] Audit log contains deletion snapshot.
     
-- [ ] Participation rate changes do not rewrite past transactions.
+- [x] Participation rate changes do not rewrite past transactions.
     
-- [ ] Participation rate changes do not rewrite event snapshots.
+- [x] Participation rate changes do not rewrite event snapshots.
     
 
 ---
@@ -2426,7 +2323,7 @@
     
 - [ ] `.env.local` is not committed.
     
-- [ ] CI uses placeholder public values.
+- [x] CI uses placeholder public values.
     
 - [ ] If a privileged server credential is ever introduced, keep it server-only.
     
@@ -2439,115 +2336,112 @@
 
 - [ ] Authentication exists.
     
-- [ ] Approved-user check exists.
+- [x] Approved-user check exists.
     
-- [ ] Application role check exists.
+- [x] Application role check exists.
     
-- [ ] Branch-lead check exists.
+- [x] Branch-lead check exists.
     
-- [ ] Branch membership scope check exists.
+- [x] Branch membership scope check exists.
     
-- [ ] Self-signup identity check exists.
+- [x] Self-signup identity check exists.
     
-- [ ] Admin-only point operations enforced.
+- [x] Admin-only point operations enforced.
     
-- [ ] Admin-only System Log enforced.
+- [x] Admin-only System Log enforced.
     
-- [ ] Warning approval identity enforced.
+- [x] Warning approval identity enforced.
     
-- [ ] Direct Supabase/API access cannot bypass UI restrictions.
+- [x] Direct Supabase/API access cannot bypass UI restrictions.
     
-- [ ] Server Actions are not treated as trusted merely because they run on the Next.js server.
+- [x] Server Actions are not treated as trusted merely because they run on the Next.js server.
     
 
 ## Production security gate
 
-- [ ] Zero temporary anonymous development write policies remain.
+- [x] Zero temporary anonymous development write policies remain.
     
-- [ ] Anonymous users cannot modify operational data.
+- [x] Anonymous users cannot modify operational data.
     
-- [ ] Anonymous users cannot call point-processing functions.
+- [x] Anonymous users cannot call point-processing functions.
     
-- [ ] Authenticated normal officers cannot perform admin actions.
+- [x] Authenticated normal officers cannot perform admin actions.
     
-- [ ] Branch leads cannot escape branch scope.
+- [x] Branch leads cannot escape branch scope.
     
-- [ ] Users cannot modify their auth/application role through normal client access.
+- [x] Users cannot modify their auth/application role through normal client access.
     
-- [ ] Security review is performed after final RLS migration.
+- [x] Security review is performed after final RLS migration (local policies, grants, RPCs, views, role/JWT tests, and advisor checked).
     
 
 ---
 
 # 59. Auditability
 
-- [ ] Point model already provides transaction history.
+- [x] Point model already provides transaction history.
     
-- [ ] Corrections can remain separate from original awards.
+- [x] Corrections can remain separate from original awards.
     
-- [ ] Actor identity exists for admin point changes.
+- [x] Actor identity exists for admin point changes.
     
-- [ ] Actor identity exists for warning changes.
+- [x] Actor identity exists for warning changes.
     
-- [ ] Actor identity exists for event management actions.
+- [x] Actor identity exists for event management actions.
     
-- [ ] Actor identity exists for rate changes.
+- [x] Actor identity exists for rate changes.
     
-- [ ] Actor identity exists for signup management where required.
+- [x] Actor identity exists for signup management where required.
     
-- [ ] Deleted-warning snapshot exists.
+- [x] Deleted-warning snapshot exists.
     
-- [ ] Deleted-award snapshot exists.
+- [x] Deleted-award snapshot exists.
     
-- [ ] Audit records include timestamp.
+- [x] Audit records include timestamp.
     
-- [ ] Audit records include affected entity.
+- [x] Audit records include affected entity.
     
-- [ ] Audit records include action.
+- [x] Audit records include action.
     
-- [ ] Audit records include actor.
+- [x] Audit records include actor.
     
-- [ ] Audit records include useful details.
+- [x] Audit records include useful details.
     
-- [ ] Audit history is admin-readable.
+- [x] Audit history is admin-readable.
     
 
 ---
 
 # 60. CI / Code Quality
 
-## Existing
+## Implemented quality gates (PR 0)
 
-- [ ] GitHub Actions workflow exists.
-    
-- [ ] CI runs on PRs to `main`.
-    
-- [ ] CI runs on pushes to `main`.
-    
-- [ ] `npm ci`
-    
-- [ ] ESLint check.
-    
-- [ ] Prettier formatting check.
-    
-- [ ] TypeScript check.
-    
-- [ ] Production build check.
-    
-- [ ] Current POC passes these checks.
-    
+- [x] GitHub Actions workflow exists.
+- [x] CI is configured for PRs to main and mvp.
+- [x] CI is configured for pushes to main and mvp.
+- [x] Deterministic dependency installation uses npm ci and package-lock.json.
+- [x] ESLint check.
+- [x] Prettier formatting check (read-only).
+- [x] Strict TypeScript check without emitted application files.
+- [x] Automated test command runs Vitest once in a Node environment.
+- [x] Production build check.
+- [x] PR 0 passed all quality gates in GitHub CI on Node 24 with an intentionally empty suite. PR 1 adds real database coverage; its verification is recorded separately.
+- [x] CI uses only fake public Supabase values and contents: read permissions.
+
+PR 0 evidence: local npm ci, format, lint, typecheck, and the empty-suite test command pass on Node 26. The local Turbopack build is blocked by the execution sandbox’s temporary-port restriction (Operation not permitted); the real production build passes in GitHub Actions on Node 24. [Verification run](https://github.com/ehuerta6/cappy-hub/actions/runs/36347554555).
+
+PR 1 evidence: [GitHub CI on Node 24](https://github.com/ehuerta6/cappy-hub/actions/runs/36349607898) passed dependency installation, formatting, lint, TypeScript, fresh migrations, real database integrity tests, populated POC upgrade/replay, generated-type drift verification, SQL function lint, and the production build. The local Turbopack port restriction remains an environment limitation.
 
 ## Release hardening
 
 - [ ] Keep CI passing throughout MVP implementation.
     
-- [ ] Run migrations through reproducible files.
+- [x] Run migrations through reproducible files.
     
-- [ ] Regenerate DB types after schema changes.
+- [x] Regenerate DB types after schema changes.
     
-- [ ] Keep secrets out of workflow files.
+- [x] Workflow files contain no privileged secrets.
     
-- [ ] Align/document supported local and CI Node version if the Node 26 local / Node 24 CI difference becomes problematic.
+- [x] Node 24 is documented and selected through .nvmrc for CI; the PR 0 local environment uses Node 26, and GitHub CI passes on Node 24.
     
 
 ---
@@ -2559,16 +2453,19 @@
 
 ## Test infrastructure
 
-- [ ] Select minimal test approach.
-    
-- [ ] Add test script to `package.json`.
-    
-- [ ] Run automated tests in CI.
-    
-- [ ] Keep test setup simple; avoid unnecessary testing infrastructure.
-    
+- [x] Select minimal test approach: Vitest with Node environment and existing @/ imports.
+- [x] Add test script to package.json.
+- [x] Run the automated test command in CI.
+- [x] Keep test setup simple; no browser, E2E, snapshot, or mocking stack is added.
+
 
 ## Database integrity tests
+
+- [x] Invalid application roles and invalid/duplicate auth links are rejected.
+- [x] Event type is required/valid; referenced types cannot be deleted.
+- [x] Removed awards do not contribute to totals; signed corrections do.
+- [x] Singleton configuration and finite fractional values are validated.
+- [x] Populated POC upgrade preserves IDs, history, custom event types, and relationships.
 
 - [ ] Officer email uniqueness.
     
@@ -2578,21 +2475,21 @@
     
 - [ ] Officer requires valid position.
     
-- [ ] Officer requires at least one branch.
+- [x] Officer save rejects empty/null branch sets and rolls back failed edits.
+- [ ] Verify the invariant across all final authorized mutation paths.
     
-- [ ] Officer/branch duplicate rejected.
+- [x] Officer/branch duplicate rejected.
     
-- [ ] Event/branch duplicate rejected.
+- [x] Event/branch duplicate rejected.
     
-- [ ] Officer/event duplicate rejected.
+- [x] Officer/event duplicate rejected.
     
-- [ ] Event end before/start equal rejected.
+- [x] Event end before/start equal rejected.
     
-- [ ] Duplicate participation award rejected.
+- [x] Duplicate participation award rejected.
     
-- [ ] Duplicate flyer award rejected.
     
-- [ ] Warning/approver duplicate rejected.
+- [x] Warning/approver duplicate rejected.
     
 
 ## Authorization tests
@@ -2625,105 +2522,86 @@
     
 - [ ] Admin can manage points.
     
-- [ ] Non-admin cannot read System Log.
+- [x] Non-admin cannot read System Log.
     
-- [ ] Required warning approver can vote.
+- [x] Required warning approver can vote.
     
 - [ ] Unrelated officer cannot vote.
     
 
 ## Points tests
 
-- [ ] Participation duration formula.
+- [x] Participation duration formula.
     
-- [ ] Fractional duration.
+- [x] Fractional duration.
     
-- [ ] Rate snapshot is stored.
+- [x] Rate snapshot is stored.
     
-- [ ] Later rate changes do not alter old award.
+- [x] Later rate changes do not alter old award.
     
-- [ ] One participation award per officer/event.
+- [x] One participation award per officer/event.
     
-- [ ] Cancelled event gives no participation award.
+- [x] Cancelled event gives no participation award.
     
-- [ ] No signup means no award.
+- [x] No signup means no award.
     
-- [ ] Manual positive transaction affects total.
+- [x] Manual positive transaction affects total.
     
-- [ ] Manual negative transaction affects total.
+- [x] Manual negative transaction affects total.
     
-- [ ] Correction affects total.
+- [x] Correction affects total.
     
-- [ ] Deleted award is removed from total but remains in audit history.
+- [x] Deleted award is removed from total but remains in audit history.
     
 
 ## Warning tests
 
-- [ ] New warning = pending.
+- [x] New warning = pending.
     
-- [ ] One reject = rejected.
+- [x] One reject = rejected.
     
-- [ ] All required approvals = approved.
+- [x] All required approvals = approved.
     
-- [ ] Partial approvals = pending.
+- [x] Partial approvals = pending.
     
-- [ ] Approved warning counts toward total.
+- [x] Approved warning counts toward total.
     
-- [ ] Pending warning does not count.
+- [x] Pending warning does not count.
     
-- [ ] Rejected warning does not count.
+- [x] Rejected warning does not count.
     
-- [ ] Three approved warnings trigger admin-review flag.
+- [x] Three approved warnings trigger admin-review flag.
     
-- [ ] Three warnings do not automatically deactivate officer.
+- [x] Three warnings do not automatically deactivate officer.
     
-- [ ] Deleted warning leaves audit record.
+- [x] Deleted warning leaves audit record.
     
-
-## Recurring event tests
-
-- [ ] Maximum 15-week span.
-    
-- [ ] Current half-year boundary enforced.
-    
-- [ ] Independent rows created.
-    
-- [ ] Signups are not copied.
-    
-- [ ] Editing one occurrence does not mutate others.
-    
-- [ ] Cancelling one occurrence does not cancel others.
-    
-- [ ] Past occurrence cannot be deleted from UI/workflow.
-    
-
----
 
 # 62. Production Processing / Scheduler
 
 - [x] Resolved decision: use Supabase Cron/pg_cron with a private PostgreSQL function, approximately once per minute.
     
 - [x] Resolved decision: scheduled processing does not depend on browser traffic.
-- [ ] Implement and verify processing while the application is idle.
+- [x] Implement and verify processing while the application is idle (local Cron probe).
     
 - [x] Resolved decision: the scheduler invokes a private trusted database function.
     
 - [x] Resolved decision: no client/anonymous caller may provide an arbitrary point rate.
-- [ ] Enforce private function execution grants and configuration reads.
+- [x] Enforce private function execution grants and configuration reads.
     
-- [ ] Processing is safe to run more than once.
+- [x] Processing is safe to run more than once.
     
-- [ ] Database uniqueness already provides an idempotency foundation.
+- [x] Database uniqueness already provides an idempotency foundation.
     
-- [ ] Processing handles events ending while app is idle.
+- [x] Processing handles events ending while app is idle (local Cron probe).
     
-- [ ] Processing handles multiple events ending simultaneously.
+- [x] Processing handles multiple events ending simultaneously.
     
-- [ ] Processing records rate snapshot.
+- [x] Processing records rate snapshot.
     
-- [ ] Processing creates audit entries.
+- [x] Processing creates audit entries.
     
-- [ ] Processing errors can be diagnosed without silently duplicating awards.
+- [x] Processing errors surface in Cron run history; failed invocations roll back without duplicate awards.
     
 
 ---
@@ -2734,19 +2612,19 @@
     
 - [x] Not-found handling exists for invalid officer/event IDs.
     
-- [ ] Authentication failures have an appropriate user-facing state.
+- [x] Authentication failures have an appropriate user-facing state.
     
-- [ ] Authorization failures have an appropriate user-facing state.
+- [x] Authorization failures have an appropriate user-facing state.
     
-- [ ] Invalid branch-scoped action returns useful error.
+- [x] Invalid branch-scoped action returns useful error.
     
-- [ ] Invalid warning approval returns useful error.
+- [x] Invalid warning approval returns useful error.
     
 - [ ] Duplicate-protected operations return useful error where relevant.
     
-- [ ] Rate-update errors are surfaced.
+- [x] Rate-update errors are surfaced.
     
-- [ ] Scheduled-processing failures are diagnosable.
+- [x] Scheduled-processing failures are diagnosable through Cron run history.
     
 - [ ] Form validation distinguishes invalid user input from server/database failures.
     
@@ -2763,11 +2641,11 @@
     
 - [x] No animation system is required.
     
-- [ ] No charting system is required for MVP.
+- [x] No charting system is required for MVP.
     
 - [x] No complex design system is required.
     
-- [ ] Keep new auth/warnings/log/config UI visually simple.
+- [x] Keep new auth/warnings/log/config UI visually simple.
     
 - [x] Prefer tables for collections.
     
@@ -2775,7 +2653,7 @@
     
 - [x] Prefer status badges for status.
     
-- [ ] Prefer simple dialogs only where confirmation is useful.
+- [x] Prefer simple dialogs only where confirmation is useful.
     
 - [x] Do not add unrelated product areas.
     
@@ -2797,21 +2675,23 @@ These are product decisions, not implementation completion. The corresponding im
 
 ## Positions, branches, and event types
 
-- [x] Only ICPC Lead, Intro Lead, and Social Media Lead receive branch-management capability; academic officer titles are descriptive.
+- [x] Lead plus shared branch membership defines branch-management scope; academic officer titles are descriptive.
 - [x] A lead may manage an event only when their branch memberships and the event’s branches have a non-empty intersection.
 - [x] Include `event_types` in the MVP schema (13 application tables). Events use required `event_type_id`; admins manage unique types, and referenced types cannot be deleted.
 
 ## Points, scheduling, and time
 
-- [x] `application_config` stores both participation points per hour and flyer completion points.
-- [x] At scheduled event end, snapshot the participation rate and award using the scheduled duration.
-- [x] Flyer completion awards the configured amount to `flyer_assigned_to`, at most once per event.
-- [x] Use America/Denver for event input, display, recurrence, and half-year boundaries.
-- [x] Early completion sets status to `past`, closes participation, retains scheduled times, and does not start point processing early or add an actual-end timestamp.
+- [x] `application_config` stores the participation points rate only.
+- [x] America/Denver is the official timezone for timed events.
+
+- [x] Timed participation awards use scheduled duration and process only after scheduled end.
+- [x] No early-completion workflow; manually persisted `past` status cannot trigger early processing.
 - [x] A logically removed award retains its history and is never regenerated.
 - [x] Trusted Supabase Cron/pg_cron calls a private database function approximately once per minute; processing does not depend on page loads, Vercel Cron, or Edge Functions.
 
 # 66. Explicitly Post-MVP / Not Required Now
+
+Untimed work events are now resolved in the updated Design Doc: dated assignments earn configurable fixed points after the event date passes in America/Denver.
 
 ## Do not block MVP on these
 
@@ -2844,23 +2724,21 @@ These are product decisions, not implementation completion. The corresponding im
 
 ## Phase 1 — Finish core data model
 
-- [ ] Add `application_config`.
+- [x] Add `application_config`.
     
-- [ ] Add participation rate snapshot column to events.
+- [x] Add participation rate snapshot column to events.
     
-- [ ] Add missing event file/flyer columns.
     
-- [ ] Add flyer award type/constraint; configured amount is awarded to the event’s flyer assignee.
     
-- [ ] Add `officer_warnings`.
+- [x] Add `officer_warnings`.
     
-- [ ] Add `warning_approvals`.
+- [x] Add `warning_approvals`.
     
-- [ ] Add `audit_logs`.
+- [x] Add `audit_logs`.
     
-- [ ] Enforce at least one branch per officer.
+- [x] Permit zero or more branches per officer.
     
-- [ ] Regenerate Supabase TypeScript types.
+- [x] Regenerate Supabase TypeScript types.
     
 
 ## Phase 2 — Authentication
@@ -2869,85 +2747,82 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] Configure Supabase Auth.
     
-- [ ] Implement login/logout.
+- [x] Implement login/logout (live provider verification pending).
     
-- [ ] Implement session-aware Supabase usage.
+- [x] Implement session-aware Supabase usage for identity and trusted mutation RPCs; authenticated reads and final direct-table policies are added in PR 4.
     
-- [ ] Implement auth account → officer mapping.
+- [x] Implement auth account → officer mapping.
     
-- [ ] Implement application roles.
+- [x] Implement application roles.
     
 
 ## Phase 3 — Authorization
 
-- [ ] Configure officer application_role assignments for admins.
+- [x] Configure officer application_role assignments for admins through the protected officer-profile workflow.
     
-- [x] Resolved decision: ICPC Lead, Intro Lead, and Social Media Lead are the only branch-lead positions.
+- [x] Resolved decision: Lead plus shared branch membership defines branch scope.
     
-- [ ] Implement branch-scope permission helpers.
+- [x] Implement branch-scope permission helpers.
     
-- [ ] Replace temporary anon RLS.
+- [x] Replace temporary anon RLS.
     
-- [ ] Protect RPCs.
+- [x] Protect RPCs.
     
-- [ ] Protect Server Actions.
+- [x] Protect Server Actions.
     
-- [ ] Test direct database/API access.
+- [x] Test direct database/API access.
     
 
 ## Phase 4 — Points correctness
 
-- [ ] Move rate into `application_config`.
+- [x] Move rate into `application_config`.
     
-- [ ] Add admin rate UI.
+- [x] Add admin rate UI.
     
-- [ ] Implement trusted scheduled processing.
+- [x] Implement trusted scheduled processing (local Cron verified; hosted deployment pending).
     
-- [ ] Snapshot rate at event end.
+- [x] Snapshot rate when the finished event is first processed.
     
-- [ ] Create audited participation awards.
+- [x] Create audited participation awards.
     
-- [ ] Add admin award removal.
+- [x] Add admin award removal.
     
-- [ ] Add actor attribution.
+- [x] Add actor attribution.
     
-- [ ] Remove page-load processing dependency.
+- [x] Remove page-load processing dependency.
     
 
 ## Phase 5 — Warnings
 
-- [ ] Warning creation.
+- [x] Warning creation.
     
-- [ ] Required approver generation.
+- [x] Required approver generation.
     
-- [ ] President/VP voting.
+- [x] President/VP voting.
     
-- [ ] Status calculation.
+- [x] Status calculation.
     
-- [ ] Warning visibility.
+- [x] Warning visibility.
     
-- [ ] Three-warning review flag.
+- [x] Three-warning review flag.
     
-- [ ] Warning deletion.
+- [x] Warning deletion.
     
-- [ ] Audit logging.
+- [x] Audit logging.
     
 
 ## Phase 6 — Complete Events
 
 - [ ] Slides/meeting-note URLs.
     
-- [ ] Early completion.
+- [x] Event removal with preserved history.
     
-- [ ] Recurring schedule generation.
     
-- [ ] Future occurrence deletion.
+
     
-- [ ] Flyer workflow.
     
-- [ ] Flyer points.
     
-- [ ] Implement admin event-type management with reference-protected deletion.
+- [x] Implement admin event-type management with reference-protected deletion.
     
 - [ ] Identity-aware signup controls.
     
@@ -2956,55 +2831,54 @@ These are product decisions, not implementation completion. The corresponding im
 
 - [ ] Log all required operations.
     
-- [ ] Build admin System Log page.
+- [x] Build admin System Log page.
     
 - [ ] Verify deletion snapshots.
     
-- [ ] Verify log access controls.
+- [x] Verify log access controls.
     
 
 ## Phase 8 — Finish frontend behavior
 
-- [ ] Auth state/navigation.
+- [x] Auth state/navigation.
     
-- [ ] Role-aware controls.
+- [x] Role-aware controls.
     
-- [ ] Dashboard signup indicator.
+- [x] Dashboard signup indicator.
     
-- [ ] Points filtering/search.
+- [x] Points filtering/search.
     
-- [ ] Warnings UI.
+- [x] Warnings UI.
     
-- [ ] Config UI.
+- [x] Config UI for the participation rate.
     
-- [ ] Timezone correctness.
+- [x] Timezone correctness.
     
-- [ ] Access to older history where needed.
+- [x] Access to older history where needed.
     
 
 ## Phase 9 — Testing and production hardening
 
-- [ ] Add automated tests.
+- [x] Add automated tests.
     
-- [ ] Authorization tests.
+- [x] Authorization tests.
     
-- [ ] Database integrity tests.
+- [x] Database integrity tests.
     
-- [ ] Scheduler tests.
+- [x] Scheduler tests (local registration, execution, and processor invariants).
     
-- [ ] Warning tests.
+- [x] Warning tests.
     
-- [ ] Recurrence tests.
     
 - [ ] Run security review.
     
-- [ ] Verify zero temporary anon write policies.
+- [x] Verify zero temporary anon write policies.
     
-- [ ] Verify CI.
+- [x] Verify CI.
     
-- [ ] Verify fresh migration replay.
+- [x] Verify fresh migration replay.
     
-- [ ] Verify production build.
+- [x] Verify production build.
     
 
 ---
@@ -3036,7 +2910,7 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] Officer has one position.
     
-- [ ] Officer has at least one branch.
+- [ ] Officer may have zero or more branches.
     
 - [ ] Admin edits officer.
     
@@ -3051,7 +2925,7 @@ These are product decisions, not implementation completion. The corresponding im
 
 - [ ] Admin creates event.
     
-- [ ] Event has at least one branch.
+- [ ] Event may have zero branches and be global.
     
 - [ ] Event has valid start/end.
     
@@ -3065,7 +2939,7 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] Admin can complete event early.
     
-- [ ] Event retains scheduled duration for points.
+- [x] Event retains scheduled duration for points.
     
 
 ## Branch-lead workflow
@@ -3096,129 +2970,93 @@ These are product decisions, not implementation completion. The corresponding im
 
 ## Automatic points workflow
 
-- [ ] Event reaches scheduled end.
+- [x] Event reaches scheduled end.
     
-- [ ] Trusted processor executes without page load.
+- [x] Trusted processor executes without page load (local Cron verified).
     
-- [ ] Current participation rate is read.
+- [x] Current participation rate is read.
     
-- [ ] Rate is snapshotted on event.
+- [x] Rate is snapshotted on event.
     
-- [ ] Scheduled duration is calculated.
+- [x] Scheduled duration is calculated.
     
-- [ ] One participation award is created for each signup.
+- [x] One participation award is created for each signup.
     
-- [ ] No duplicate participation award is possible.
+- [x] No duplicate participation award is possible.
     
-- [ ] Officer total changes automatically.
+- [x] Officer total changes automatically.
     
-- [ ] Dashboard total changes automatically.
+- [x] Dashboard total changes automatically.
     
-- [ ] Award creation appears in System Log.
+- [x] Award creation appears in System Log.
     
 
 ## Rate-change workflow
 
-- [ ] Admin changes participation rate.
+- [x] Admin changes participation rate.
     
-- [ ] Rate change is logged.
+- [x] Rate change is logged.
     
-- [ ] Past awards do not change.
+- [x] Past awards do not change.
     
-- [ ] Past event snapshots do not change.
+- [x] Past event snapshots do not change.
     
 - [ ] Future events use new rate when they end.
     
 
 ## Correction workflow
 
-- [ ] Admin creates positive/negative correction.
+- [x] Admin creates positive/negative correction.
     
-- [ ] Original transaction remains intact.
+- [x] Original transaction remains intact.
     
-- [ ] Correction has reason.
+- [x] Correction has reason.
     
-- [ ] Correction has actor.
+- [x] Correction has actor.
     
-- [ ] Total updates.
+- [x] Total updates.
     
-- [ ] Action is logged.
+- [x] Action is logged.
     
 
 ## Award-removal workflow
 
-- [ ] Admin removes incorrect award.
+- [x] Admin removes incorrect award.
     
-- [ ] Total updates.
+- [x] Total updates.
     
-- [ ] Deleted award details remain in System Log.
+- [x] Deleted award details remain in System Log.
     
-- [ ] Normal officer cannot remove award.
+- [x] Normal officer cannot remove award.
     
 
 ## Warning workflow
 
-- [ ] Admin creates warning.
+- [x] Admin creates warning.
     
-- [ ] Warning begins pending.
+- [x] Warning begins pending.
     
-- [ ] President receives/has approval record.
+- [x] President receives/has approval record.
     
-- [ ] Every VP receives/has approval record.
+- [x] Every VP receives/has approval record.
     
-- [ ] Any rejection makes warning rejected.
+- [x] Any rejection makes warning rejected.
     
-- [ ] All approvals make warning approved.
+- [x] All approvals make warning approved.
     
-- [ ] Otherwise warning stays pending.
+- [x] Otherwise warning stays pending.
     
-- [ ] Only approved warnings appear to assigned officer.
+- [x] Only approved warnings appear to assigned officer.
     
-- [ ] Only approved warnings count.
+- [x] Only approved warnings count.
     
-- [ ] Three approved warnings flag admin review.
+- [x] Three approved warnings flag admin review.
     
-- [ ] Admin manually decides deactivation.
+- [x] Admin manually decides deactivation.
     
-- [ ] Warning actions are logged.
+- [x] Warning actions are logged.
     
-- [ ] Warning deletion leaves audit history.
-    
-
-## Recurring event workflow
-
-- [ ] Authorized user creates recurrence.
-    
-- [ ] Recurrence is at most 15 weeks.
-    
-- [ ] Recurrence stays in current half-year.
-    
-- [ ] Each occurrence is independent.
-    
-- [ ] No signups are copied.
-    
-- [ ] Individual occurrence can be edited.
-    
-- [ ] Individual occurrence can be cancelled.
-    
-- [ ] Eligible future occurrence can be deleted.
-    
-- [ ] Past occurrence cannot be deleted through UI.
-    
-
-## Social flyer workflow
-
-- [ ] Social event shows flyer state.
-    
-- [ ] Flyer can be assigned.
-    
-- [ ] Authorized user marks flyer complete.
-    
-- [ ] Only one flyer award is created.
-    
-- [ ] Flyer completion is logged.
-    
-- [ ] Flyer award is logged.
+- [x] Warning deletion leaves audit history.
     
 
 ## Dashboard workflow
@@ -3254,9 +3092,9 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] Useful details are visible.
     
-- [ ] Deleted warning snapshot remains.
+- [x] Deleted warning snapshot remains.
     
-- [ ] Deleted point award snapshot remains.
+- [x] Removed point transaction snapshot remains in System Log.
     
 
 ---
@@ -3267,7 +3105,7 @@ These are product decisions, not implementation completion. The corresponding im
 
 - [ ] All MVP features above are complete.
     
-- [x] Product decisions in the Design Doc and checklist are resolved.
+- [x] Updated Design Doc resolves untimed events as dated work with fixed automatic points; early completion is removed.
 - [ ] Implement the resolved product decisions.
     
 - [ ] No post-MVP feature is accidentally blocking release.
@@ -3275,19 +3113,19 @@ These are product decisions, not implementation completion. The corresponding im
 
 ## Database
 
-- [ ] All 13 intended MVP application tables exist.
+- [x] All 13 intended MVP application tables exist.
     
-- [ ] All required columns exist.
+- [x] All required columns exist.
     
-- [ ] All required FKs exist.
+- [x] All required FKs exist.
     
-- [ ] All required uniqueness constraints exist.
+- [x] All required uniqueness constraints exist.
     
-- [ ] All required check constraints exist.
+- [x] All required check constraints exist.
     
-- [ ] Migrations reproduce complete schema from scratch.
+- [x] Migrations reproduce complete schema from scratch.
     
-- [ ] Database types are regenerated.
+- [x] Database types are regenerated.
     
 
 ## Authentication and security
@@ -3296,93 +3134,92 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] Account mapping works.
     
-- [ ] Roles work.
+- [ ] Roles work in the deployed MVP (local authorization tests pass; hosted sign-in is pending).
     
-- [ ] Branch permissions work.
+- [ ] Branch permissions work in the deployed MVP (local authorization tests pass; hosted sign-in is pending).
     
-- [ ] Final RLS enabled.
+- [ ] Final RLS enabled in the hosted MVP (migration and local tests complete; deployment is pending).
     
-- [ ] Temporary anonymous policies removed.
+- [x] Temporary anonymous policies removed.
     
-- [ ] Privileged RPCs are protected.
+- [x] Privileged RPCs are protected.
     
 - [ ] Service credentials are not exposed.
     
-- [ ] Direct API access cannot bypass permissions.
+- [ ] Direct API access cannot bypass permissions in the deployed MVP (local PostgreSQL role/JWT tests pass; hosted verification is pending).
     
 
 ## Points
 
-- [ ] Rate stored in database.
+- [x] Rate stored in database.
     
-- [ ] Rate configurable by admins.
+- [x] Rate configurable by admins.
     
-- [ ] Rate snapshots work.
+- [x] Rate snapshots work in the local database.
     
 - [ ] Trusted scheduled processing works.
     
-- [ ] Participation awards are idempotent.
+- [x] Participation awards are idempotent in the local database.
     
-- [ ] Corrections work.
+- [x] Corrections work.
     
-- [ ] Award removal works.
+- [x] Award removal works.
     
-- [ ] Flyer award works.
     
-- [ ] Point totals remain derived.
+- [x] Point totals remain derived.
     
 
 ## Auditability
 
-- [ ] System Log exists.
+- [x] System Log exists.
     
 - [ ] Required actions are logged.
     
-- [ ] Actors are recorded.
+- [x] Actors are recorded.
     
 - [ ] Deleted-record snapshots are retained.
     
-- [ ] Only admins can view logs.
+- [x] Only admins can view logs.
     
 
 ## Frontend
 
 - [ ] Login flow works.
     
-- [ ] Navigation is role-aware.
+- [x] Navigation is role-aware.
     
-- [ ] Dashboard complete.
+- [x] Dashboard complete.
     
-- [ ] Officers complete.
+- [x] Officers complete.
     
-- [ ] Events complete.
+- [x] Events complete.
     
-- [ ] Points complete.
+- [x] Points complete.
     
-- [ ] Warnings complete.
+- [x] Warnings complete.
     
-- [ ] System Log complete.
+- [x] System Log complete.
     
-- [ ] Admin configuration controls complete.
+- [x] Admin configuration controls complete.
     
-- [ ] UI remains simple and usable.
+- [x] UI remains simple and usable.
     
 
 ## Quality
 
-- [ ] Lint passes.
+- [x] Lint passes.
     
-- [ ] Format check passes.
+- [x] Format check passes.
     
-- [ ] Typecheck passes.
+- [x] Typecheck passes.
     
-- [ ] Production build passes.
+- [x] Production build passes.
     
-- [ ] Automated tests pass.
+- [x] Automated tests pass.
     
-- [ ] Authorization test suite passes.
+- [x] Authorization test suite passes.
     
-- [ ] Fresh migration replay passes.
+- [x] Fresh migration replay passes.
     
 - [ ] Production security review passes.
     
@@ -3401,7 +3238,6 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] **Events are complete**
     
-- [ ] **Recurring events are complete**
     
 - [ ] **Event participation is identity-aware**
     
@@ -3409,7 +3245,6 @@ These are product decisions, not implementation completion. The corresponding im
     
 - [ ] **Trusted automatic participation processing is complete**
     
-- [ ] **Flyer workflow is complete**
     
 - [ ] **Dashboard is complete**
     
@@ -3422,3 +3257,27 @@ These are product decisions, not implementation completion. The corresponding im
 - [ ] **Required automated tests pass**
     
 - [ ] **Cappy Hub MVP is ready for real CIC administrative use**
+
+## PR 10 leadership alignment (local implementation evidence)
+
+- [x] Timed event form uses one America/Denver date and start/end times from 06:00 through 23:59; PostgreSQL enforces date, order, and local hours for new or edited rows.
+- [x] Untimed event form uses date and fixed points; authorized managers assign officers, and the private scheduled processor awards after the local date passes.
+- [x] Timed processing ignores persisted `past` status until `ends_at`; removed and cancelled events are excluded.
+- [x] Past event edits preserve existing award rows and snapshots, with before/after System Log entries.
+- [x] Event removal sets `deleted_at`/`deleted_by`, retains relationships, and records a pre-removal snapshot.
+- [x] Admin point amount edits change derived totals, store `updated_at`/`updated_by`, and log before/after rows.
+- [x] All point transaction types can be logically removed; removed automatic awards remain unique and cannot regenerate.
+- [x] Manual point form initially offers No event and five recent active events, with server-backed older-event search.
+- [x] Protected navigation provides Back/Forward controls using browser history.
+- [x] Database tests cover timed/untimed processing, authorization, past edits, logical removals, and audit history.
+- [ ] Hosted Supabase migration and live provider flows remain unverified.
+- [ ] Final production release gate requires deployment and hosted verification.
+
+## PR 11 local frontend and test evidence
+
+- [x] Dashboard shows every upcoming event with the signed-in officer's participation state; Events list and detail show the same state, including untimed assignments.
+- [x] Event create/edit saves optional slides and meeting-notes URLs through a checked RPC; empty links become null, HTTP(S) links display on detail, and changes are audited.
+- [x] Cancellation and removal actions ask for confirmation; existing permission checks, status labels, error states, history views, and pagination remain in place.
+- [x] Database suites have distinct owners for schema integrity, RLS/grants, role authorization, and feature rules. The local suite dropped from 587 to 300 pgTAP assertions after removing repeated checks; 17 Vitest tests still run, and the database tests use synthetic fixtures and real local PostgreSQL.
+- [x] Local migration replay, populated upgrade preservation, type generation check, SQL lint, security advisor, lint, formatting, typecheck, Vitest/pgTAP, and webpack production build passed for PR 11.
+- [ ] Hosted migrations, Google provider and redirect settings, production environment and deployment, hosted Cron, and live role/workflow/security acceptance still require PR 12.

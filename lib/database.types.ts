@@ -7,13 +7,56 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5";
-  };
   public: {
     Tables: {
+      application_config: {
+        Row: {
+          id: number;
+          participation_points_per_hour: number;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          participation_points_per_hour: number;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          participation_points_per_hour?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      audit_logs: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          created_at: string;
+          details: NonNullable<Json>;
+          entity_id: string;
+          entity_type: string;
+          id: number;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          entity_id: string;
+          entity_type: string;
+          id?: number;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          entity_id?: string;
+          entity_type?: string;
+          id?: number;
+        };
+        Relationships: [];
+      };
       branches: {
         Row: {
           created_at: string;
@@ -99,41 +142,91 @@ export type Database = {
           },
         ];
       };
-      events: {
+      event_types: {
         Row: {
           created_at: string;
-          description: string;
-          ends_at: string;
           id: number;
-          location: string | null;
           name: string;
-          starts_at: string;
-          status: string;
-          type: string;
         };
         Insert: {
           created_at?: string;
-          description?: string;
-          ends_at: string;
           id?: number;
-          location?: string | null;
           name: string;
-          starts_at: string;
-          status?: string;
-          type: string;
         };
         Update: {
           created_at?: string;
-          description?: string;
-          ends_at?: string;
           id?: number;
-          location?: string | null;
           name?: string;
-          starts_at?: string;
-          status?: string;
-          type?: string;
         };
         Relationships: [];
+      };
+      events: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          deleted_by: string | null;
+          description: string;
+          ends_at: string | null;
+          event_date: string;
+          event_type_id: number;
+          fixed_points: number | null;
+          id: number;
+          location: string | null;
+          meeting_notes_url: string | null;
+          name: string;
+          participation_points_per_hour_at_end: number | null;
+          slides_url: string | null;
+          starts_at: string | null;
+          status: string;
+          untimed_processed_at: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          deleted_by?: string | null;
+          description?: string;
+          ends_at?: string | null;
+          event_date: string;
+          event_type_id: number;
+          fixed_points?: number | null;
+          id?: number;
+          location?: string | null;
+          meeting_notes_url?: string | null;
+          name: string;
+          participation_points_per_hour_at_end?: number | null;
+          slides_url?: string | null;
+          starts_at?: string | null;
+          status?: string;
+          untimed_processed_at?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          deleted_by?: string | null;
+          description?: string;
+          ends_at?: string | null;
+          event_date?: string;
+          event_type_id?: number;
+          fixed_points?: number | null;
+          id?: number;
+          location?: string | null;
+          meeting_notes_url?: string | null;
+          name?: string;
+          participation_points_per_hour_at_end?: number | null;
+          slides_url?: string | null;
+          starts_at?: string | null;
+          status?: string;
+          untimed_processed_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "events_event_type_id_fkey";
+            columns: ["event_type_id"];
+            isOneToOne: false;
+            referencedRelation: "event_types";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       officer_branches: {
         Row: {
@@ -172,8 +265,49 @@ export type Database = {
           },
         ];
       };
+      officer_warnings: {
+        Row: {
+          created_at: string;
+          id: number;
+          officer_id: number;
+          reason: string;
+          status: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          officer_id: number;
+          reason: string;
+          status?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          officer_id?: number;
+          reason?: string;
+          status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "officer_warnings_officer_id_fkey";
+            columns: ["officer_id"];
+            isOneToOne: false;
+            referencedRelation: "officer_point_totals";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "officer_warnings_officer_id_fkey";
+            columns: ["officer_id"];
+            isOneToOne: false;
+            referencedRelation: "officers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       officers: {
         Row: {
+          application_role: string;
+          auth_user_id: string | null;
           classification: string | null;
           created_at: string;
           id: number;
@@ -184,6 +318,8 @@ export type Database = {
           utep_email: string | null;
         };
         Insert: {
+          application_role?: string;
+          auth_user_id?: string | null;
           classification?: string | null;
           created_at?: string;
           id?: number;
@@ -194,6 +330,8 @@ export type Database = {
           utep_email?: string | null;
         };
         Update: {
+          application_role?: string;
+          auth_user_id?: string | null;
           classification?: string | null;
           created_at?: string;
           id?: number;
@@ -223,6 +361,10 @@ export type Database = {
           officer_id: number;
           points: number;
           reason: string;
+          removed_at: string | null;
+          removed_by: string | null;
+          updated_at: string | null;
+          updated_by: string | null;
         };
         Insert: {
           award_type: string;
@@ -233,6 +375,10 @@ export type Database = {
           officer_id: number;
           points: number;
           reason: string;
+          removed_at?: string | null;
+          removed_by?: string | null;
+          updated_at?: string | null;
+          updated_by?: string | null;
         };
         Update: {
           award_type?: string;
@@ -243,6 +389,10 @@ export type Database = {
           officer_id?: number;
           points?: number;
           reason?: string;
+          removed_at?: string | null;
+          removed_by?: string | null;
+          updated_at?: string | null;
+          updated_by?: string | null;
         };
         Relationships: [
           {
@@ -270,24 +420,53 @@ export type Database = {
       };
       positions: {
         Row: {
-          can_manage_branch_events: boolean;
           created_at: string;
           id: number;
           name: string;
         };
         Insert: {
-          can_manage_branch_events?: boolean;
           created_at?: string;
           id?: number;
           name: string;
         };
         Update: {
-          can_manage_branch_events?: boolean;
           created_at?: string;
           id?: number;
           name?: string;
         };
         Relationships: [];
+      };
+      warning_approvals: {
+        Row: {
+          approver_id: string;
+          approver_role: string;
+          decided_at: string | null;
+          decision: string;
+          warning_id: number;
+        };
+        Insert: {
+          approver_id: string;
+          approver_role: string;
+          decided_at?: string | null;
+          decision?: string;
+          warning_id: number;
+        };
+        Update: {
+          approver_id?: string;
+          approver_role?: string;
+          decided_at?: string | null;
+          decision?: string;
+          warning_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "warning_approvals_warning_id_fkey";
+            columns: ["warning_id"];
+            isOneToOne: false;
+            referencedRelation: "officer_warnings";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
@@ -307,15 +486,104 @@ export type Database = {
         };
         Relationships: [];
       };
+      point_history: {
+        Row: {
+          award_type: string | null;
+          created_at: string | null;
+          created_by: string | null;
+          created_by_name: string | null;
+          event_id: number | null;
+          event_name: string | null;
+          id: number | null;
+          officer_id: number | null;
+          officer_name: string | null;
+          points: number | null;
+          reason: string | null;
+          removed_at: string | null;
+          removed_by: string | null;
+          removed_by_name: string | null;
+          search_text: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "point_transactions_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "point_transactions_officer_id_fkey";
+            columns: ["officer_id"];
+            isOneToOne: false;
+            referencedRelation: "officer_point_totals";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "point_transactions_officer_id_fkey";
+            columns: ["officer_id"];
+            isOneToOne: false;
+            referencedRelation: "officers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
+      add_manual_transaction: {
+        Args: {
+          p_award_type: string;
+          p_event_id?: number;
+          p_officer_id: number;
+          p_points: number;
+          p_reason: string;
+        };
+        Returns: undefined;
+      };
+      cancel_event: { Args: { p_event_id: number }; Returns: undefined };
       change_event_signup: {
         Args: { p_event_id: number; p_officer_id: number; p_remove?: boolean };
         Returns: undefined;
       };
-      process_completed_events: {
-        Args: { p_points_per_hour: number };
+      claim_current_officer_identity: {
+        Args: Record<PropertyKey, never>;
         Returns: number;
+      };
+      create_branch: { Args: { p_name: string }; Returns: number };
+      create_event_type: { Args: { p_name: string }; Returns: number };
+      create_position: { Args: { p_name: string }; Returns: number };
+      create_warning: {
+        Args: { p_officer_id: number; p_reason: string };
+        Returns: number;
+      };
+      decide_warning: {
+        Args: { p_decision: string; p_warning_id: number };
+        Returns: undefined;
+      };
+      delete_branch: { Args: { p_id: number }; Returns: undefined };
+      delete_event_type: { Args: { p_id: number }; Returns: undefined };
+      delete_position: { Args: { p_id: number }; Returns: undefined };
+      delete_warning: { Args: { p_warning_id: number }; Returns: undefined };
+      remove_event: { Args: { p_event_id: number }; Returns: boolean };
+      remove_participation_award: {
+        Args: { p_transaction_id: number };
+        Returns: boolean;
+      };
+      remove_point_transaction: {
+        Args: { p_transaction_id: number };
+        Returns: boolean;
+      };
+      rename_branch: {
+        Args: { p_id: number; p_name: string };
+        Returns: undefined;
+      };
+      rename_event_type: {
+        Args: { p_id: number; p_name: string };
+        Returns: undefined;
+      };
+      rename_position: {
+        Args: { p_id: number; p_name: string };
+        Returns: undefined;
       };
       save_event: {
         Args: {
@@ -323,10 +591,42 @@ export type Database = {
           p_description: string;
           p_ends_at: string;
           p_event_id?: number;
+          p_event_type_id: number;
           p_location: string;
           p_name: string;
           p_starts_at: string;
-          p_type: string;
+        };
+        Returns: number;
+      };
+      save_event_v2: {
+        Args: {
+          p_branch_ids: number[];
+          p_description: string;
+          p_ends_at: string;
+          p_event_date: string;
+          p_event_id?: number;
+          p_event_type_id: number;
+          p_fixed_points: number;
+          p_location: string;
+          p_name: string;
+          p_starts_at: string;
+        };
+        Returns: number;
+      };
+      save_event_with_links: {
+        Args: {
+          p_branch_ids: number[];
+          p_description: string;
+          p_ends_at: string;
+          p_event_date: string;
+          p_event_id?: number;
+          p_event_type_id: number;
+          p_fixed_points: number;
+          p_location: string;
+          p_meeting_notes_url?: string;
+          p_name: string;
+          p_slides_url?: string;
+          p_starts_at: string;
         };
         Returns: number;
       };
@@ -342,6 +642,15 @@ export type Database = {
           p_utep_email?: string;
         };
         Returns: number;
+      };
+      set_officer_application_role: {
+        Args: { p_officer_id: number; p_role: string };
+        Returns: undefined;
+      };
+      set_participation_rate: { Args: { p_rate: number }; Returns: undefined };
+      update_point_transaction: {
+        Args: { p_points: number; p_transaction_id: number };
+        Returns: undefined;
       };
     };
     Enums: {

@@ -2,9 +2,12 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, mvp]
   push:
-    branches: [main]
+    branches: [main, mvp]
+
+permissions:
+  contents: read
 
 jobs:
   checks:
@@ -21,20 +24,50 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run ESLint
-        run: npm run lint
-
       - name: Check formatting
         run: npm run format:check
+
+      - name: Run ESLint
+        run: npm run lint
 
       - name: Check TypeScript types
         run: npm run typecheck
 
+      - name: Clean up leftover local Supabase containers
+        run: npx supabase stop --no-backup || true
+
+      - name: Start disposable local database and replay migrations
+        id: db_start
+        run: npm run db:start
+
+      - name: Diagnose local database startup failure
+        if: ${{ failure() && steps.db_start.outcome == 'failure' }}
+        run: |
+          docker ps -a || true
+          docker network ls || true
+          sudo ss -ltnp | grep -E ':(54321|54322|54323|54324|54327)\b' || true
+
+      - name: Run automated tests
+        run: npm test
+
+      - name: Verify populated POC upgrade and fresh replay
+        run: npm run test:db:upgrade
+
+      - name: Verify generated database types
+        run: npm run db:types:check
+
+      - name: Lint database functions
+        run: npx supabase db lint --local --schema public --fail-on error
+
       - name: Build for production
         run: npm run build
+
+      - name: Stop disposable database
+        if: always()
+        run: npx supabase stop --no-backup || true
