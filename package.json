@@ -15,7 +15,12 @@
     "db:reset": "supabase db reset --local --no-seed",
     "db:types": "node scripts/database-types.mjs",
     "db:types:check": "node scripts/database-types.mjs --check",
-    "test:db:upgrade": "node scripts/test-db-upgrade.mjs"
+    "test:db:upgrade": "node scripts/test-db-upgrade.mjs",
+    "local:start": "supabase start",
+    "local:reset": "npm run local:start && node scripts/setup-local-dev.mjs",
+    "local:stop": "supabase stop",
+    "test:local-seed": "node scripts/verify-local-seed.mjs",
+    "local:setup": "npm run local:reset"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
