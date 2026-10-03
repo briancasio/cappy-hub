@@ -37,53 +37,44 @@ Do not delete catalog rows referenced by historical records. For example, `event
 
 Keep authorization and important validation in trusted server actions or SQL functions, with database constraints for data integrity. UI filtering alone is not enforcement. Never disable RLS as a shortcut. Never edit a migration already applied to production; create a new migration for follow-up changes.
 
-## Manual production database update
+CI compares migration files with the PR base on pull requests and with the previous commit on pushes to `main` or `mvp`. It allows new migration files and rejects modification, deletion, or renaming of migrations already present in that base. A direct push that changes an existing migration fails CI, so the production workflow does not continue. Protect `main` by requiring PRs so invalid changes are stopped before reaching the branch.
 
-Follow this checklist only after the database feature PR has been fully validated locally and passed CI, received approval, and is ready to ship. Merge the PR to `main` before applying anything to production.
+## Production deployment
 
-1. Pull the merged `main` and update local Supabase. `local:start` is the normal non-destructive workflow; `local:reset` rebuilds local from scratch and discards its current rows.
+After a PR is merged to `main`, the existing CI workflow runs the normal quality checks. When CI succeeds, `.github/workflows/deploy-production.yml` checks out that exact `main` commit and runs these steps in order:
 
-   ```bash
-   git switch main
-   git pull
-   npm run local:start
-   ```
+1. Compare `supabase/migrations/` with production migration history using `SUPABASE_DB_URL`. Production history must match a prefix of the local migration list; migrations in `main` that have not reached production are allowed.
+2. Run `supabase db push --db-url "$SUPABASE_DB_URL" --dry-run` (without `--include-seed`).
+3. Apply pending migrations with `supabase db push --db-url "$SUPABASE_DB_URL"` (without `--include-seed`).
+4. Verify production migration history is fully aligned with `supabase/migrations/`.
+5. Trigger the configured Vercel Production Deploy Hook. It starts Vercel's deployment only after migrations have been applied and verified.
 
-   If the local stack is already running and has pending migrations, apply them with:
+Any failed step stops the workflow before the next step. A CI failure skips production deployment. A migration history mismatch, failed dry run, failed migration, or final history check prevents the hook from being called, so the new application never receives production traffic before its migrations succeed. A failed Vercel deployment leaves the previous application active.
 
-   ```bash
-   npx supabase migration up --local
-   ```
+### Required GitHub configuration
 
-2. Check local migration history, link the CLI to the production Cappy Hub project, then compare local and remote history. Replace the placeholder with the production project's Reference ID from Supabase Project Settings. If this CLI installation is not authenticated yet, run `npx supabase login` first.
+Add the following repository or `production` environment configuration. The workflow uses the `production` environment, so configure its secrets and variables there:
 
-   ```bash
-   npx supabase migration list --local
-   npx supabase link --project-ref <PRODUCTION_PROJECT_ID>
-   npx supabase migration list
-   ```
+| Name                     | Type   | Purpose                                                                                        |
+| ------------------------ | ------ | ---------------------------------------------------------------------------------------------- |
+| `SUPABASE_DB_URL`        | Secret | Production Supabase Postgres Session Pooler connection string, including its database password |
+| `VERCEL_DEPLOY_HOOK_URL` | Secret | Vercel Production Deploy Hook URL                                                              |
 
-   The link command prompts for the production database password. Enter it at the prompt; do not put it in a command or commit it. In the combined migration list, production-only migration versions or unexpected history differences mean stop and reconcile before continuing. New migrations merged on `main` may be local-only until deployed.
+These are the only production environment secrets required by GitHub Actions. Store both in the `production` environment. The workflow does not print the database connection string or deploy hook URL. Never commit them or expose Supabase service-role credentials to application or browser code.
 
-3. Preview the production push. Review the migrations in the output and confirm they are the intended pending changes.
+Use the production project's Postgres Session Pooler connection string and URL-encode any special characters in its database password, as required for connection URLs.
 
-   ```bash
-   npx supabase db push --dry-run
-   ```
+### One-time Vercel project setting
 
-4. Only if the dry run is clean, apply pending migrations:
+Keep the Vercel project's **Production Branch** set to `main`. The repository's `vercel.json` disables automatic Git-triggered production deployments from `main`; GitHub Actions applies pending migrations and verifies migration history alignment before it sends a POST request to the Production Deploy Hook configured for `main`. Pull request and feature branch Preview deployments remain enabled.
 
-   ```bash
-   npx supabase db push
-   ```
+Configure `VERCEL_DEPLOY_HOOK_URL` as a Production Deploy Hook for the `main` branch. No reserved production branch is needed.
 
-   `db push` applies pending migrations; do not add `--include-seed`.
+### Migration history and failure handling
 
-If production was changed manually outside migrations, or its schema/history does not match the expected migration state, stop before `db push`. Reconcile the drift with a maintainer and record the intended change through a new migration before proceeding. Do not repair migration history blindly.
+`supabase/migrations/` is the schema source of truth. Before applying anything, the workflow stops if production records a version missing from the repository or if production history is not a prefix of the local migration history. That permits expected pending migrations while catching production-only versions and gaps. It never runs `migration repair`, resets production, runs seeds, or includes seed data in `db push`.
 
-Never run `supabase db reset --linked` against production, run `supabase/seed.sql` against production, or copy local test data to production.
-
-After the push, `npx supabase migration list` should show local and production histories aligned. If production-only versions or other differences appear, stop and reconcile them before doing another push.
+Production migrations must remain backward-compatible and additive so the previous application deployment stays valid if migrations succeed but the final Vercel deployment fails. If drift is reported, deployment stops. A maintainer must inspect production and the migration files, determine the correct state, and record any required schema changes in a new migration before retrying. Never repair migration history blindly. Once a migration reaches production, keep its version, filename, and contents unchanged; use a new migration for follow-up changes. A migration or deployment failure leaves the previous Vercel production application active. Fix the failure and retry by merging a follow-up commit to `main`.
 
 ## Database test stack
 
