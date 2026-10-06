@@ -150,45 +150,31 @@ export default async function OfficerDetailPage({
                 : "Not specified"}
             </dd>
           </dl>
-          {profile.data && (
+          {canManageOfficers(actor) && (
             <section className="space-y-4 rounded-lg border border-border bg-surface/30 p-4">
               <SectionHeading
                 title="Onboarding details"
                 description="Visible only to Leads and Admins"
               />
               <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-x-5 gap-y-2 text-sm [&>dt]:mt-0 [&>dd]:mt-0 [&>dd]:min-w-0 [&>dd]:break-words">
-                {profile.data.birthday && (
-                  <><dt>Birthday</dt><dd>{profile.data.birthday}</dd></>
-                )}
-                {profile.data.hobbies && (
-                  <><dt>Hobbies</dt><dd>{profile.data.hobbies}</dd></>
-                )}
-                {profile.data.favorite_color && (
-                  <><dt>Favorite Color</dt><dd>{profile.data.favorite_color}</dd></>
-                )}
-                {profile.data.favorite_song && (
-                  <><dt>Favorite Song</dt><dd>{profile.data.favorite_song}</dd></>
-                )}
-                {profile.data.personality_type && (
-                  <><dt>Personality</dt><dd>{profile.data.personality_type}</dd></>
-                )}
-                {profile.data.favorite_pokemon && (
-                  <><dt>Fav Pokémon</dt><dd>{profile.data.favorite_pokemon}</dd></>
-                )}
-                {profile.data.personal_motto && (
-                  <><dt>Motto</dt><dd>{profile.data.personal_motto}</dd></>
-                )}
-                {profile.data.instagram_handle && (
-                  <><dt>Instagram</dt><dd>{profile.data.instagram_handle}</dd></>
-                )}
-                {profile.data.tshirt_size && (
-                  <><dt>T-shirt Size</dt><dd>{profile.data.tshirt_size}</dd></>
-                )}
-                <dt>Has CIC shirt</dt>
-                <dd>{profile.data.has_cic_shirt ? "Yes" : "No"}</dd>
-                {profile.data.photo_url && (
-                  <><dt>Photo URL</dt><dd><a href={profile.data.photo_url} className="text-secondary hover:underline break-all" target="_blank" rel="noopener noreferrer">{profile.data.photo_url}</a></dd></>
-                )}
+                <dt>Birthday</dt><dd>{profile.data?.birthday ?? "Not provided"}</dd>
+                <dt>Hobbies</dt><dd>{profile.data?.hobbies ?? "Not provided"}</dd>
+                <dt>Favorite Color</dt><dd>{profile.data?.favorite_color ?? "Not provided"}</dd>
+                <dt>Favorite Song</dt><dd>{profile.data?.favorite_song ?? "Not provided"}</dd>
+                <dt>Personality</dt><dd>{profile.data?.personality_type ?? "Not provided"}</dd>
+                <dt>Fav Pokémon</dt><dd>{profile.data?.favorite_pokemon ?? "Not provided"}</dd>
+                <dt>Motto</dt><dd>{profile.data?.personal_motto ?? "Not provided"}</dd>
+                <dt>Instagram</dt><dd>{profile.data?.instagram_handle ?? "Not provided"}</dd>
+                <dt>T-shirt Size</dt><dd>{profile.data?.tshirt_size ?? "Not provided"}</dd>
+                <dt>Has CIC shirt</dt><dd>{profile.data?.has_cic_shirt ? "Yes" : "No"}</dd>
+                <dt>Photo URL</dt>
+                <dd>
+                  {profile.data?.photo_url ? (
+                    <a href={profile.data.photo_url} className="text-secondary hover:underline break-all" target="_blank" rel="noopener noreferrer">
+                      {profile.data.photo_url}
+                    </a>
+                  ) : "Not provided"}
+                </dd>
               </dl>
             </section>
           )}
