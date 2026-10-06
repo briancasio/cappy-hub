@@ -18,10 +18,22 @@ create table public.officer_profiles (
 alter table public.officer_profiles enable row level security;
 grant select on table public.officer_profiles to authenticated;
 
-create policy "Leads and admins read profiles" on public.officer_profiles
+create function private.current_is_executive() returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.officers o
+    join public.positions p on p.id = o.position_id
+    where o.id = private.current_active_officer_id() and p.name in ('President', 'Vice President of Operations', 'Vice President of Academics'))
+$$;
+revoke all on function private.current_is_executive() from public, anon, authenticated;
+grant execute on function private.current_is_executive() to authenticated;
+
+grant execute on function private.current_is_lead() to authenticated;
+
+create policy "Leads, executives, and admins read profiles" on public.officer_profiles
   for select to authenticated using (
     (select private.current_is_admin()) or 
     (select private.current_is_lead()) or 
+    (select private.current_is_executive()) or 
     officer_id = (select private.current_active_officer_id())
   );
 

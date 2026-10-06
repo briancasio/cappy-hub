@@ -6,6 +6,7 @@ import ContextualBackLink from "@/components/contextual-back-link";
 import {
   getAuthorizationContext,
   canManageOfficers,
+  canViewOfficerProfiles,
   isAdmin,
 } from "@/lib/authorization";
 import PointTransactionTable from "@/components/point-transaction-table";
@@ -150,11 +151,11 @@ export default async function OfficerDetailPage({
                 : "Not specified"}
             </dd>
           </dl>
-          {canManageOfficers(actor) && (
+          {canViewOfficerProfiles(actor) && (
             <section className="space-y-4 rounded-lg border border-border bg-surface/30 p-4">
               <SectionHeading
                 title="Onboarding details"
-                description="Visible only to Leads and Admins"
+                description="Visible only to Executives, Leads, and Admins"
               />
               <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-x-5 gap-y-2 text-sm [&>dt]:mt-0 [&>dd]:mt-0 [&>dd]:min-w-0 [&>dd]:break-words">
                 <dt>Birthday</dt><dd>{profile.data?.birthday ?? "Not provided"}</dd>
