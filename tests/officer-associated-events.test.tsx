@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 vi.mock("@/lib/authorization", () => ({
   getAuthorizationContext: async () => ({ id: 1, applicationRole: "officer" }),
-  canManageOfficers: () => false,
+  canViewOfficerProfiles: () => true, canManageOfficers: () => false,
   isAdmin: () => false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
