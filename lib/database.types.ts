@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   public: {
@@ -1199,10 +1193,7 @@ export type Database = {
         Returns: undefined;
       };
       approve_task: { Args: { p_task_id: number }; Returns: undefined };
-      assign_task: {
-        Args: { p_officer_id: number; p_task_id: number };
-        Returns: undefined;
-      };
+      assign_task: { Args: { p_officer_id: number; p_task_id: number }; Returns: undefined };
       bulk_add_event_officers: {
         Args: { p_event_id: number; p_officer_ids: number[] };
         Returns: Json;
@@ -1216,10 +1207,7 @@ export type Database = {
         Args: { p_event_id: number; p_officer_id: number; p_remove?: boolean };
         Returns: undefined;
       };
-      claim_current_officer_identity: {
-        Args: Record<PropertyKey, never>;
-        Returns: number;
-      };
+      claim_current_officer_identity: { Args: Record<PropertyKey, never>; Returns: number };
       complete_task: { Args: { p_task_id: number }; Returns: undefined };
       create_branch: { Args: { p_name: string }; Returns: number };
       create_event_location: { Args: { p_name: string }; Returns: number };
@@ -1256,14 +1244,8 @@ export type Database = {
         };
         Returns: number;
       };
-      create_warning: {
-        Args: { p_officer_id: number; p_reason: string };
-        Returns: number;
-      };
-      decide_warning: {
-        Args: { p_decision: string; p_warning_id: number };
-        Returns: undefined;
-      };
+      create_warning: { Args: { p_officer_id: number; p_reason: string }; Returns: number };
+      decide_warning: { Args: { p_decision: string; p_warning_id: number }; Returns: undefined };
       delete_branch: { Args: { p_id: number }; Returns: undefined };
       delete_event_location: { Args: { p_id: number }; Returns: undefined };
       delete_event_type: { Args: { p_id: number }; Returns: undefined };
@@ -1298,35 +1280,17 @@ export type Database = {
         Returns: number;
       };
       remove_event: { Args: { p_event_id: number }; Returns: boolean };
-      remove_participation_award: {
-        Args: { p_transaction_id: number };
-        Returns: boolean;
-      };
-      remove_point_transaction: {
-        Args: { p_transaction_id: number };
-        Returns: boolean;
-      };
+      remove_participation_award: { Args: { p_transaction_id: number }; Returns: boolean };
+      remove_point_transaction: { Args: { p_transaction_id: number }; Returns: boolean };
       remove_task: { Args: { p_task_id: number }; Returns: undefined };
       remove_task_assignment: {
         Args: { p_officer_id: number; p_task_id: number };
         Returns: undefined;
       };
-      rename_branch: {
-        Args: { p_id: number; p_name: string };
-        Returns: undefined;
-      };
-      rename_event_location: {
-        Args: { p_id: number; p_name: string };
-        Returns: undefined;
-      };
-      rename_event_type: {
-        Args: { p_id: number; p_name: string };
-        Returns: undefined;
-      };
-      rename_position: {
-        Args: { p_id: number; p_name: string };
-        Returns: undefined;
-      };
+      rename_branch: { Args: { p_id: number; p_name: string }; Returns: undefined };
+      rename_event_location: { Args: { p_id: number; p_name: string }; Returns: undefined };
+      rename_event_type: { Args: { p_id: number; p_name: string }; Returns: undefined };
+      rename_position: { Args: { p_id: number; p_name: string }; Returns: undefined };
       restore_event: { Args: { p_event_id: number }; Returns: undefined };
       save_event: {
         Args: {
@@ -1437,10 +1401,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<
-  keyof Database,
-  "public"
->];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -1452,19 +1413,15 @@ export type Tables<
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never) = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R;
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
@@ -1473,15 +1430,14 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never) = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I;
     }
@@ -1497,15 +1453,14 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never) = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U;
     }
@@ -1521,15 +1476,14 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never) = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
@@ -1544,9 +1498,7 @@ export type CompositeTypes<
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never) = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals;
-}
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
