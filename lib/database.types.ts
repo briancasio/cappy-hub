@@ -405,6 +405,72 @@ export type Database = {
           },
         ];
       };
+      officer_profiles: {
+        Row: {
+          birthday: string | null;
+          created_at: string;
+          favorite_color: string | null;
+          favorite_pokemon: string | null;
+          favorite_song: string | null;
+          has_cic_shirt: boolean;
+          hobbies: string | null;
+          instagram_handle: string | null;
+          officer_id: number;
+          personal_motto: string | null;
+          personality_type: string | null;
+          photo_url: string | null;
+          tshirt_size: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          birthday?: string | null;
+          created_at?: string;
+          favorite_color?: string | null;
+          favorite_pokemon?: string | null;
+          favorite_song?: string | null;
+          has_cic_shirt?: boolean;
+          hobbies?: string | null;
+          instagram_handle?: string | null;
+          officer_id: number;
+          personal_motto?: string | null;
+          personality_type?: string | null;
+          photo_url?: string | null;
+          tshirt_size?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          birthday?: string | null;
+          created_at?: string;
+          favorite_color?: string | null;
+          favorite_pokemon?: string | null;
+          favorite_song?: string | null;
+          has_cic_shirt?: boolean;
+          hobbies?: string | null;
+          instagram_handle?: string | null;
+          officer_id?: number;
+          personal_motto?: string | null;
+          personality_type?: string | null;
+          photo_url?: string | null;
+          tshirt_size?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "officer_profiles_officer_id_fkey";
+            columns: ["officer_id"];
+            isOneToOne: true;
+            referencedRelation: "officer_point_totals";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "officer_profiles_officer_id_fkey";
+            columns: ["officer_id"];
+            isOneToOne: true;
+            referencedRelation: "officers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       officer_warnings: {
         Row: {
           created_at: string;
@@ -1303,6 +1369,23 @@ export type Database = {
           p_utep_email?: string;
         };
         Returns: number;
+      };
+      save_officer_profile: {
+        Args: {
+          p_birthday?: string;
+          p_favorite_color?: string;
+          p_favorite_pokemon?: string;
+          p_favorite_song?: string;
+          p_has_cic_shirt?: boolean;
+          p_hobbies?: string;
+          p_instagram_handle?: string;
+          p_officer_id: number;
+          p_personal_motto?: string;
+          p_personality_type?: string;
+          p_photo_url?: string;
+          p_tshirt_size?: string;
+        };
+        Returns: undefined;
       };
       save_task: {
         Args: {
