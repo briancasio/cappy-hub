@@ -13,6 +13,7 @@ vi.mock("react", async (importOriginal) => ({
 vi.mock("@/lib/current-officer", () => ({ requireCurrentOfficer: vi.fn() }));
 vi.mock("@/lib/authorization", () => ({
   getAuthorizationContext: vi.fn(),
+  canViewOfficerProfiles: () => true,
   isAdmin: (actor: { applicationRole: string }) =>
     actor.applicationRole === "admin",
   isLead: () => false,

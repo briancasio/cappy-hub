@@ -2,6 +2,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/authorization", () => ({
   getAuthorizationContext: vi.fn(),
+  canViewOfficerProfiles: () => true,
   isAdmin: (actor: { applicationRole: string }) =>
     actor.applicationRole === "admin",
 }));

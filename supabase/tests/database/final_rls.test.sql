@@ -119,6 +119,7 @@ select ok(not exists(select 1 from pg_catalog.pg_proc p
       ,'public.create_event_location(text)'::regprocedure
       ,'public.rename_event_location(bigint,text)'::regprocedure
       ,'public.delete_event_location(bigint)'::regprocedure
+      ,'public.save_officer_profile(bigint,text,text,text,text,text,text,text,text,text,boolean,text)'::regprocedure
     )), 'authenticated has no unreviewed public RPC entry point');
 
 -- Fixtures are inserted as database owner. Every probe below changes to the
@@ -156,12 +157,15 @@ insert into warning_approvals(warning_id,approver_id,approver_role) values
   (-402,'00000000-0000-4000-8000-000000000401','President');
 insert into audit_logs(id,actor_id,action,entity_type,entity_id) values
   (-401,'00000000-0000-4000-8000-000000000401','rls_test','officer','-403');
+insert into officer_profiles(officer_id, birthday) values
+  (-401, 'Jan 1'), (-402, 'Feb 2'), (-403, 'Mar 3'), (-404, 'Apr 4');
 
 -- Anonymous: actual SELECT, INSERT, UPDATE, DELETE, RPC, and view requests.
 set local role anon;
 select throws_ok($$select * from officers$$,'42501',null,'anon cannot list officers or read contact emails');
 select throws_ok($$select * from point_transactions$$,'42501',null,'anon cannot read points');
 select throws_ok($$select * from dashboard_summary$$,'42501',null,'anon cannot read dashboard view');
+select throws_ok($$select * from officer_profiles$$,'42501',null,'anon cannot read profiles');
 select throws_ok($$select save_officer('Attack',17,'active',null,null,'attack-anon@example.org')$$,
   '42501',null,'anon cannot invoke trusted mutation');
 select throws_ok($$select private.process_finished_events()$$,
@@ -174,6 +178,7 @@ select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000405'
 set local role authenticated;
 select is((select count(*) from officers),0::bigint,'unlinked user sees no officers');
 select is((select count(*) from events),0::bigint,'unlinked user sees no events');
+select is((select count(*) from officer_profiles),0::bigint,'unlinked user sees no profiles');
 select is((select count(*) from dashboard_summary),0::bigint,'unlinked user sees no aggregate dashboard row');
 select is((select count(*) from officer_warnings),0::bigint,'unlinked user sees no warnings');
 select is(claim_current_officer_identity(),null::bigint,
@@ -182,6 +187,7 @@ select throws_ok($$select change_event_signup(-402,-403,false)$$,
   'P0001','Unauthorized','unlinked user cannot call signup RPC successfully');
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000404',true);
 select is((select count(*) from officers),0::bigint,'inactive linked officer sees no officers');
+select is((select count(*) from officer_profiles),0::bigint,'inactive linked officer sees no profiles');
 select is((select count(*) from dashboard_summary),0::bigint,'inactive linked officer sees no dashboard row');
 select is(claim_current_officer_identity(),null::bigint,
   'inactive account cannot reclaim application access');
@@ -189,6 +195,7 @@ select is(claim_current_officer_identity(),null::bigint,
 -- Normal officer: peer reads work, but every direct mutation path is shut.
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000403',true);
 select is((select count(*) from officers),4::bigint,'normal officer can read peer directory including inactive history');
+select is((select count(*) from officer_profiles),1::bigint,'normal officer sees only their own profile');
 select is((select utep_email from officers where id=-401),'rls-admin@example.org',
   'approved officer can read permitted peer contact email');
 select is((select count(*) from point_transactions),2::bigint,'normal officer can read point history');
@@ -221,6 +228,7 @@ select throws_ok($$insert into audit_logs(action,entity_type,entity_id) values('
 -- Lead: same peer reads, no raw write to acquire another branch or event.
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000402',true);
 select is((select count(*) from events),3::bigint,'Lead can read operational events');
+select is((select count(*) from officer_profiles),4::bigint,'Lead can read all officer profiles');
 select is((select count(*) from officer_warnings),1::bigint,'Lead sees own approved warning only');
 select is((select count(*) from audit_logs),0::bigint,'Lead cannot read audit logs');
 select throws_ok($$insert into event_branches(event_id,branch_id) values(-403,1)$$,
@@ -234,6 +242,7 @@ select lives_ok($$select cancel_event(-402)$$,'Lead can cancel managed event via
 
 -- Admin: broad reads and checked RPC writes; raw writes stay denied.
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000401',true);
+select is((select count(*) from officer_profiles),4::bigint,'admin reads all profiles');
 select is((select count(*) from officer_warnings),4::bigint,'admin reads every warning');
 select is((select count(*) from audit_logs where id=-401),1::bigint,
   'admin reads the fixture System Log record alongside new mutation entries');
