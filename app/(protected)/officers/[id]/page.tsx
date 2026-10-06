@@ -158,23 +158,40 @@ export default async function OfficerDetailPage({
                 description="Visible only to Executives, Leads, and Admins"
               />
               <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-x-5 gap-y-2 text-sm [&>dt]:mt-0 [&>dd]:mt-0 [&>dd]:min-w-0 [&>dd]:break-words">
-                <dt>Birthday</dt><dd>{profile.data?.birthday ?? "Not provided"}</dd>
-                <dt>Hobbies</dt><dd>{profile.data?.hobbies ?? "Not provided"}</dd>
-                <dt>Favorite Color</dt><dd>{profile.data?.favorite_color ?? "Not provided"}</dd>
-                <dt>Favorite Song</dt><dd>{profile.data?.favorite_song ?? "Not provided"}</dd>
-                <dt>Personality</dt><dd>{profile.data?.personality_type ?? "Not provided"}</dd>
-                <dt>Fav Pokémon</dt><dd>{profile.data?.favorite_pokemon ?? "Not provided"}</dd>
-                <dt>Motto</dt><dd>{profile.data?.personal_motto ?? "Not provided"}</dd>
-                <dt>Instagram</dt><dd>{profile.data?.instagram_handle ?? "Not provided"}</dd>
-                <dt>T-shirt Size</dt><dd>{profile.data?.tshirt_size ?? "Not provided"}</dd>
-                <dt>Has CIC shirt</dt><dd>{profile.data?.has_cic_shirt ? "Yes" : "No"}</dd>
+                <dt>Birthday</dt>
+                <dd>{profile.data?.birthday ?? "Not provided"}</dd>
+                <dt>Hobbies</dt>
+                <dd>{profile.data?.hobbies ?? "Not provided"}</dd>
+                <dt>Favorite Color</dt>
+                <dd>{profile.data?.favorite_color ?? "Not provided"}</dd>
+                <dt>Favorite Song</dt>
+                <dd>{profile.data?.favorite_song ?? "Not provided"}</dd>
+                <dt>Personality</dt>
+                <dd>{profile.data?.personality_type ?? "Not provided"}</dd>
+                <dt>Fav Pokémon</dt>
+                <dd>{profile.data?.favorite_pokemon ?? "Not provided"}</dd>
+                <dt>Motto</dt>
+                <dd>{profile.data?.personal_motto ?? "Not provided"}</dd>
+                <dt>Instagram</dt>
+                <dd>{profile.data?.instagram_handle ?? "Not provided"}</dd>
+                <dt>T-shirt Size</dt>
+                <dd>{profile.data?.tshirt_size ?? "Not provided"}</dd>
+                <dt>Has CIC shirt</dt>
+                <dd>{profile.data?.has_cic_shirt ? "Yes" : "No"}</dd>
                 <dt>Photo URL</dt>
                 <dd>
                   {profile.data?.photo_url ? (
-                    <a href={profile.data.photo_url} className="text-secondary hover:underline break-all" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={profile.data.photo_url}
+                      className="text-secondary hover:underline break-all"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {profile.data.photo_url}
                     </a>
-                  ) : "Not provided"}
+                  ) : (
+                    "Not provided"
+                  )}
                 </dd>
               </dl>
             </section>

@@ -8,7 +8,8 @@ vi.mock("react", async (original) => ({
 }));
 vi.mock("@/lib/authorization", () => ({
   getAuthorizationContext: vi.fn(),
-  canViewOfficerProfiles: () => true, canManageOfficers: () => true,
+  canViewOfficerProfiles: () => true,
+  canManageOfficers: () => true,
   isAdmin: () => true,
   canManageEvent: vi.fn(() => true),
   canSeeAllBranches: () => true,

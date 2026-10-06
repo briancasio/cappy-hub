@@ -3,7 +3,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 vi.mock("@/lib/authorization", () => ({
   getAuthorizationContext: vi.fn(),
-  canViewOfficerProfiles: () => true, isAdmin: (actor: { applicationRole: string }) =>
+  canViewOfficerProfiles: () => true,
+  isAdmin: (actor: { applicationRole: string }) =>
     actor.applicationRole === "admin",
 }));
 vi.mock("next/navigation", () => ({
