@@ -41,6 +41,7 @@ type ActionPresentationKind =
   | "task-completion-changed"
   | "task-completed"
   | "task-approved"
+  | "officer-profile-updated"
   | "officer-role-changed"
   | "points"
   | "warning";
@@ -106,6 +107,10 @@ const actionPresentations: Record<string, ActionPresentation> = {
   "officer.role_changed": {
     label: "Changed an officer's application role",
     kind: "officer-role-changed",
+  },
+  "officer.profile_updated": {
+    label: "Updated an Officer's profile",
+    kind: "officer-profile-updated",
   },
   "officer.updated": { label: "Updated an officer" },
   "points.correction_created": {
@@ -235,6 +240,7 @@ export function findAuditActionCodes(search: string) {
 
 const fieldLabels: Record<string, string> = {
   application_role: "Application role",
+  birthday: "Birthday",
   approval_required: "Approval required",
   branch_id: "Branch",
   branch_ids: "Branches",
@@ -243,7 +249,16 @@ const fieldLabels: Record<string, string> = {
   ends_at: "End time",
   event_date: "Event date",
   event_type_id: "Event type",
+  favorite_color: "Favorite color",
+  favorite_pokemon: "Favorite Pokémon",
+  favorite_song: "Favorite song",
+  has_cic_shirt: "CIC shirt",
+  hobbies: "Hobbies",
+  instagram_handle: "Instagram handle",
   location: "Location",
+  personal_motto: "Personal motto",
+  personality_type: "Personality type",
+  photo_url: "Photo URL",
   max_volunteers: "Max volunteers",
   meeting_notes_url: "Meeting notes link",
   signup_sheet_url: "External roster / signup sheet",
@@ -257,6 +272,7 @@ const fieldLabels: Record<string, string> = {
   slides_url: "Slides link",
   starts_at: "Start time",
   status: "Status",
+  tshirt_size: "T-shirt size",
   title: "Title",
 };
 
@@ -345,6 +361,19 @@ function formatValue(value: unknown, field?: string) {
 }
 
 function summarizeChanges(details: AuditObject | undefined) {
+  if (Array.isArray(details?.changed_fields)) {
+    const fields = details.changed_fields.filter(
+      (field): field is string => typeof field === "string",
+    );
+    if (fields.length > 0) {
+      return [
+        {
+          label: "Fields changed",
+          value: fields.map(labelField).join(", "),
+        },
+      ];
+    }
+  }
   const before = asObject(details?.before);
   const after = asObject(details?.after);
   if (before && after) {
@@ -455,6 +484,8 @@ function sentenceFor(
       return `${recordName} was approved for ${personName}`;
     case "officer-role-changed":
       return `Changed ${readString(detail, ["officer_name"]) ?? personName}'s application role`;
+    case "officer-profile-updated":
+      return `Updated ${personName}'s profile details`;
     case "points": {
       const points =
         detail?.points ??
@@ -480,6 +511,16 @@ function detailSummaryFor(
   fallback: string,
 ) {
   switch (presentation?.kind) {
+    case "officer-profile-updated": {
+      const fields = Array.isArray(details?.changed_fields)
+        ? details.changed_fields.filter(
+            (field): field is string => typeof field === "string",
+          )
+        : [];
+      return fields.length > 0
+        ? `Updated ${fields.map(labelField).join(", ")}`
+        : "Updated profile details";
+    }
     case "event-signup":
       return `${officerName ?? "Officer"} signed up`;
     case "event-signout":

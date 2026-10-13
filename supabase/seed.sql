@@ -40,6 +40,16 @@ values
   (-1023, 'Drew Martinez', 'drew.martinez@cappy.test', null, (select id from public.positions where name = 'Officer'), 'junior', 'active', 'officer'),
   (-1024, 'Quinn Brown', 'quinn.brown@cappy.test', null, (select id from public.positions where name = 'Officer'), null, 'active', 'officer');
 
+insert into public.officer_profiles
+  (officer_id, birthday, hobbies, favorite_color, favorite_song,
+   personality_type, favorite_pokemon, personal_motto, instagram_handle,
+   has_cic_shirt, tshirt_size)
+values
+  (-1010, 'October 15', 'Chess, hiking, and coding', 'Emerald', 'Starlight',
+   'INTJ', 'Gengar', 'Keep learning', '@local_officer', true, 'M'),
+  (-1013, null, 'Reading, robotics', 'Forest Green', 'Here Comes the Sun',
+   null, 'Pikachu', null, '@avery.chen', null, null);
+
 insert into public.officer_branches (officer_id, branch_id)
 values
   (-1001, (select id from public.branches where name = 'general')),

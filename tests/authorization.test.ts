@@ -72,6 +72,22 @@ describe("canEditOfficerProfile authorization", () => {
     expect(canEditOfficerProfile(officer, 20)).toBe(false);
   });
 
+  it("does not give Leads or Event Executives edit authority over other profiles", () => {
+    for (const positionCode of [
+      "lead",
+      "president",
+      "vice_president_operations",
+      "vice_president_academics",
+    ]) {
+      const leader = {
+        id: 10,
+        applicationRole: "officer",
+        positionCode,
+      } as never;
+      expect(canEditOfficerProfile(leader, 20)).toBe(false);
+    }
+  });
+
   it("allows admins to edit any officer profile", () => {
     const admin = { id: 1, applicationRole: "admin" } as never;
     expect(canEditOfficerProfile(admin, 1)).toBe(true);

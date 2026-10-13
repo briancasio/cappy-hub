@@ -61,7 +61,7 @@ it("allows an officer to edit their own profile", async () => {
   const result = await saveOfficerProfile({ error: "", success: "" }, form);
   expect(result).toEqual({
     error: "",
-    success: "Onboarding details saved",
+    success: "Profile details saved",
   });
   expect(rpc).toHaveBeenCalledWith("save_officer_profile", {
     p_officer_id: 10,
@@ -91,7 +91,7 @@ it("allows an admin to edit any officer profile", async () => {
   form.set("birthday", "Jan 1");
 
   const result = await saveOfficerProfile({ error: "", success: "" }, form);
-  expect(result.success).toBe("Onboarding details saved");
+  expect(result.success).toBe("Profile details saved");
   expect(rpc).toHaveBeenCalledWith(
     "save_officer_profile",
     expect.objectContaining({

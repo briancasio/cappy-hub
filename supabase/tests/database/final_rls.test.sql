@@ -145,6 +145,17 @@ select ok(not exists(select 1 from pg_catalog.pg_proc p
       ,'public.mutate_recurring_event_with_capacity(bigint,text,text,uuid,bigint,integer,jsonb,text,date[],boolean,integer)'::regprocedure
       ,'public.save_officer_profile(bigint,text,text,text,text,text,text,text,text,text,boolean,text)'::regprocedure
     )), 'authenticated has no unreviewed public RPC entry point');
+select ok((select prosecdef and proconfig @> array['search_path=""']
+  from pg_catalog.pg_proc where oid='public.save_officer_profile(bigint,text,text,text,text,text,text,text,text,text,boolean,text)'::regprocedure),
+  'profile RPC is SECURITY DEFINER with an empty search_path');
+select ok(has_function_privilege('authenticated',
+  'public.save_officer_profile(bigint,text,text,text,text,text,text,text,text,text,boolean,text)','EXECUTE')
+  and not has_function_privilege('anon',
+  'public.save_officer_profile(bigint,text,text,text,text,text,text,text,text,text,boolean,text)','EXECUTE'),
+  'only authenticated clients can invoke the profile RPC');
+select ok(not has_function_privilege('authenticated','private.current_is_lead()','EXECUTE')
+  and not has_function_privilege('authenticated','private.current_is_event_executive()','EXECUTE'),
+  'profile access does not grant unnecessary private authorization helpers');
 
 -- Fixtures are inserted as database owner. Every probe below changes to the
 -- real PostgREST roles with a request JWT sub; all fixture writes roll back.
@@ -153,14 +164,17 @@ insert into auth.users(id,email) values
   ('00000000-0000-4000-8000-000000000402','rls-lead@example.org'),
   ('00000000-0000-4000-8000-000000000403','rls-officer@example.org'),
   ('00000000-0000-4000-8000-000000000404','rls-inactive@example.org'),
-  ('00000000-0000-4000-8000-000000000405','rls-unlinked@example.org');
+  ('00000000-0000-4000-8000-000000000405','rls-unlinked@example.org'),
+  ('00000000-0000-4000-8000-000000000406','rls-executive@example.org');
 insert into officers(id,name,utep_email,position_id,application_role,status,auth_user_id) values
   (-401,'RLS Admin','rls-admin@example.org',(select id from positions where name='Officer'),'admin','active','00000000-0000-4000-8000-000000000401'),
   (-402,'RLS Lead','rls-lead@example.org',(select id from positions where name='Lead'),'officer','active','00000000-0000-4000-8000-000000000402'),
   (-403,'RLS Officer','rls-officer@example.org',(select id from positions where name='Officer'),'officer','active','00000000-0000-4000-8000-000000000403'),
-  (-404,'RLS Inactive','rls-inactive@example.org',(select id from positions where name='Officer'),'officer','inactive','00000000-0000-4000-8000-000000000404');
+  (-404,'RLS Inactive','rls-inactive@example.org',(select id from positions where name='Officer'),'officer','inactive','00000000-0000-4000-8000-000000000404'),
+  (-406,'RLS Executive','rls-executive@example.org',(select id from positions where name='President'),'officer','active','00000000-0000-4000-8000-000000000406');
 insert into officer_branches(officer_id,branch_id)
-  select -402,id from branches where name='intro';
+  select -402,id from branches where name='intro'
+  union all select -403,id from branches where name='icpc';
 insert into events(id,name,description,location,event_type_id,starts_at,ends_at) values
   (-401,'RLS Global','Test event','TBA',(select id from event_types where name='Meeting'),'2099-09-20 09:00-06','2099-09-20 10:00-06'),
   (-402,'RLS Intro','Test event','TBA',(select id from event_types where name='Meeting'),'2099-09-20 09:00-06','2099-09-20 10:00-06'),
@@ -190,6 +204,8 @@ select throws_ok($$select * from officers$$,'42501',null,'anon cannot list offic
 select throws_ok($$select * from point_transactions$$,'42501',null,'anon cannot read points');
 select throws_ok($$select * from dashboard_summary$$,'42501',null,'anon cannot read dashboard view');
 select throws_ok($$select * from officer_profiles$$,'42501',null,'anon cannot read profiles');
+select throws_ok($$select save_officer_profile(-403,'Unauthorized',null,null,null,null,null,null,null,null,null,null)$$,
+  '42501',null,'anon cannot invoke profile RPC');
 select throws_ok($$select save_officer('Attack',17,'active',null,null,'attack-anon@example.org')$$,
   '42501',null,'anon cannot invoke trusted mutation');
 select throws_ok($$select private.process_finished_events()$$,
@@ -205,6 +221,8 @@ select is((select count(*) from events),0::bigint,'unlinked user sees no events'
 select is((select count(*) from dashboard_summary),0::bigint,'unlinked user sees no aggregate dashboard row');
 select is((select count(*) from officer_warnings),0::bigint,'unlinked user sees no warnings');
 select is((select count(*) from officer_profiles),0::bigint,'unlinked user sees no profiles');
+select throws_ok($$select save_officer_profile(-403,'Unauthorized',null,null,null,null,null,null,null,null,null,null)$$,
+  'P0001','Unauthorized','unlinked user cannot update profiles through RPC');
 select is(claim_current_officer_identity(),null::bigint,
   'unlinked account cannot claim an unrelated officer');
 select throws_ok($$select change_event_signup(-402,-403,false)$$,
@@ -213,12 +231,14 @@ select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000404'
 select is((select count(*) from officers),0::bigint,'inactive linked officer sees no officers');
 select is((select count(*) from dashboard_summary),0::bigint,'inactive linked officer sees no dashboard row');
 select is((select count(*) from officer_profiles),0::bigint,'inactive linked officer sees no profiles');
+select throws_ok($$select save_officer_profile(-404,'Unauthorized',null,null,null,null,null,null,null,null,null,null)$$,
+  'P0001','Unauthorized','inactive user cannot update profiles through RPC');
 select is(claim_current_officer_identity(),null::bigint,
   'inactive account cannot reclaim application access');
 
 -- Normal officer: peer reads work, but every direct mutation path is shut.
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000403',true);
-select is((select count(*) from officers),4::bigint,'normal officer can read peer directory including inactive history');
+select is((select count(*) from officers),5::bigint,'normal officer can read peer directory including inactive history');
 select is((select utep_email from officers where id=-401),'rls-admin@example.org',
   'approved officer can read permitted peer contact email');
 select is((select count(*) from point_transactions),2::bigint,'normal officer can read point history');
@@ -231,7 +251,18 @@ select is((select count(*) from officer_warnings where id in (-402,-403,-404)),0
   'normal officer cannot see pending, rejected, or other warning');
 select is((select count(*) from warning_approvals),0::bigint,'normal officer cannot enumerate warning approvals');
 select is((select count(*) from audit_logs),0::bigint,'normal officer cannot read System Log');
-select is((select count(*) from officer_profiles),1::bigint,'normal officer sees only their own profile');
+select is((select count(*) from officer_profiles),4::bigint,'active Officer reads profiles across Branches and Positions');
+select lives_ok($$select save_officer_profile(-403,'Mar 4',null,null,null,null,null,null,null,null,null,null)$$,
+  'Officer updates own profile through trusted RPC');
+select is((select birthday from officer_profiles where officer_id=-403),'Mar 4','own profile RPC persists normalized values');
+select throws_ok($$select save_officer_profile(-402,'Unauthorized',null,null,null,null,null,null,null,null,null,null)$$,
+  'P0001','Cannot manage another officer''s profile unless admin','Officer cannot edit another profile through RPC');
+select throws_ok($$insert into officer_profiles(officer_id,birthday) values(-405,'Injected')$$,
+  '42501',null,'Officer cannot directly insert a profile');
+select throws_ok($$update officer_profiles set birthday='Injected' where officer_id=-402$$,
+  '42501',null,'Officer cannot directly update a profile');
+select throws_ok($$delete from officer_profiles where officer_id=-402$$,
+  '42501',null,'Officer cannot directly delete a profile');
 select throws_ok($$insert into officers(name,utep_email,position_id) values('Attack','attack-officer@example.org',17)$$,
   '42501',null,'normal officer cannot insert officer');
 select throws_ok($$insert into events(name,description,location,event_type_id,starts_at,ends_at) values('Attack','Test event','TBA',1,'2099-09-20 09:00-06','2099-09-20 10:00-06')$$,
@@ -255,6 +286,8 @@ select is((select count(*) from events),3::bigint,'Lead can read operational eve
 select is((select count(*) from officer_warnings),1::bigint,'Lead sees own approved warning only');
 select is((select count(*) from audit_logs),0::bigint,'Lead cannot read audit logs');
 select is((select count(*) from officer_profiles),4::bigint,'Lead can read all officer profiles');
+select throws_ok($$select save_officer_profile(-403,'Lead edit',null,null,null,null,null,null,null,null,null,null)$$,
+  'P0001','Cannot manage another officer''s profile unless admin','Lead has no additional profile editing authority');
 select throws_ok($$insert into event_branches(event_id,branch_id) values(-403,1)$$,
   '42501',null,'Lead cannot take over unrelated event by raw branch insert');
 select lives_ok($$select change_event_signup(-402,-403,false)$$,
@@ -264,10 +297,37 @@ select throws_ok($$select change_event_signup(-403,-403,false)$$,
   'Lead trusted RPC still rejects unrelated signup management');
 select lives_ok($$select cancel_event(-402)$$,'Lead can cancel managed event via trusted RPC');
 
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000406',true);
+select throws_ok($$select save_officer_profile(-403,'Executive edit',null,null,null,null,null,null,null,null,null,null)$$,
+  'P0001','Cannot manage another officer''s profile unless admin',
+  'Event Executive has no additional profile editing authority');
+
 -- Admin: broad reads and checked RPC writes; raw writes stay denied.
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000401',true);
 select is((select count(*) from officer_warnings),4::bigint,'admin reads every warning');
 select is((select count(*) from officer_profiles),4::bigint,'admin reads all profiles');
+select ok(exists(select 1 from audit_logs where action='officer.profile_updated'
+  and entity_id='-403' and actor_id='00000000-0000-4000-8000-000000000403'
+  and details->>'target_officer_id'='-403'
+  and details->'changed_fields' @> '["birthday"]'::jsonb
+  and not (details ? 'birthday')),'profile audit records actor target and changed names without personal values');
+select lives_ok($$select save_officer_profile(-402,'Admin edit',null,null,null,null,null,null,null,null,null,null)$$,
+  'Admin can edit another Officer profile through trusted RPC');
+select throws_ok($$insert into officer_profiles(officer_id,birthday) values(-405,'Injected')$$,
+  '42501',null,'Admin raw insert is denied in favor of the trusted RPC');
+select is((select birthday from officer_profiles where officer_id=-402),'Admin edit','Admin RPC persists target profile');
+select throws_ok($$select save_officer_profile(-402,null,null,null,null,null,null,null,null,'javascript:alert(1)',null,null)$$,
+  '23514',null,'database rejects unsafe profile photo URLs');
+select throws_ok($$select save_officer_profile(-402,repeat('x',101),null,null,null,null,null,null,null,null,null,null)$$,
+  '22001',null,'database enforces profile text length limits');
+select lives_ok($$select save_officer_profile(-402,'   ',null,null,null,null,null,null,null,null,null,null)$$,
+  'blank optional text is stored as absent');
+select is((select birthday from officer_profiles where officer_id=-402),null::varchar,
+  'blank text normalizes to NULL');
+select is((select count(*) from audit_logs where entity_type='officer' and entity_id='-402'
+  and action='officer.profile_updated' and details->>'target_officer_id'='-402'
+  and details ? 'changed_fields' and not (details ? 'birthday')),
+  2::bigint,'profile audit records meaningful edits without logging personal values');
 select is((select count(*) from audit_logs where id=-401),1::bigint,
   'admin reads the fixture System Log record alongside new mutation entries');
 select throws_ok($$update officers set application_role='officer' where id=-401$$,
@@ -293,6 +353,33 @@ select lives_ok($$select set_officer_application_role(-403,'admin')$$,
   'admin role-management RPC still works');
 select lives_ok($$select cancel_event(-401)$$,
   'admin cancellation RPC still works on global events');
+
+select lives_ok($$select save_officer(
+  (select name from officers where id=-403),
+  (select position_id from officers where id=-403), 'inactive',
+  (select coalesce(array_agg(branch_id order by branch_id),'{}'::bigint[])
+    from officer_branches where officer_id=-403), -403,
+  (select utep_email from officers where id=-403),
+  (select personal_email from officers where id=-403),
+  (select classification from officers where id=-403))$$,
+  'deactivating an Officer preserves the profile row');
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000403',true);
+select is((select count(*) from officer_profiles),0::bigint,
+  'inactive Officer cannot read profile data');
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000401',true);
+select is((select birthday from officer_profiles where officer_id=-403),'Mar 4',
+  'profile data remains after deactivation');
+select lives_ok($$select save_officer(
+  (select name from officers where id=-403),
+  (select position_id from officers where id=-403), 'active',
+  (select coalesce(array_agg(branch_id order by branch_id),'{}'::bigint[])
+    from officer_branches where officer_id=-403), -403,
+  (select utep_email from officers where id=-403),
+  (select personal_email from officers where id=-403),
+  (select classification from officers where id=-403))$$,
+  'reactivation preserves the existing profile');
+select is((select birthday from officer_profiles where officer_id=-403),'Mar 4',
+  'reactivation does not recreate or replace profile details');
 
 select * from finish();
 rollback;

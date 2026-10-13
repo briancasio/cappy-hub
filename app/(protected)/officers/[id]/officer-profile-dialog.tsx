@@ -69,7 +69,7 @@ export default function OfficerProfileDialog({
           setOpen(true);
         }}
       >
-        Edit onboarding details
+        Edit profile details
       </button>
       {success && !open && <FormMessage kind="success">{success}</FormMessage>}
       <dialog
@@ -84,11 +84,10 @@ export default function OfficerProfileDialog({
               id={titleId}
               className="text-base font-semibold tracking-tight text-foreground"
             >
-              Edit onboarding details
+              Edit profile details
             </h2>
             <p className="text-xs text-secondary">
-              Update personal and onboarding profile details. All fields are
-              optional.
+              Share a few profile details. Every field is optional.
             </p>
           </div>
 

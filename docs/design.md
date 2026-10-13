@@ -18,26 +18,26 @@ The external design reference named in the changelog is only an influence on gen
 
 ## 2. Product UI inventory
 
-| Surface             | Current route                          | Current scope                                                                                               |
-| ------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Dashboard           | `/`                                    | Club counts, personal access and point total, current action items, upcoming events, recent point activity. |
-| Events              | `/events`                              | Search/filter, participation-based groups, event status and signup actions.                                 |
-| Event detail        | `/events/[id]`                         | Event information, participation, manager actions, and event point history.                                 |
-| Create/edit event   | `/events/new`, `/events/[id]/edit`     | Event fields and recurring-series controls where applicable.                                                |
-| Tasks               | `/tasks`                               | Search/filter, Your tasks and Other tasks, assignment counts, and available task actions.                   |
-| Task detail         | `/tasks/[id]`                          | Task details, per-Officer completion management, and recurring-task actions where applicable.               |
-| Create/edit task    | `/tasks/new`, `/tasks/[id]/edit`       | New tasks can repeat; authorized managers edit standalone and recurring Tasks.                              |
-| Calendar            | `/calendar`                            | FullCalendar month grid with Event/Task visibility toggles.                                                 |
-| Officers            | `/officers`                            | Directory filters, officer table, and warning decisions awaiting the current user.                          |
-| Officer detail      | `/officers/[id]`                       | Profile, application access, warnings when visible, associated events, and points.                          |
-| Add/edit officer    | `/officers/new`, `/officers/[id]/edit` | Officer record fields; application role is managed separately.                                              |
-| Officer catalogs    | `/officers/catalogs`                   | Admin-only positions, branches, and reusable event locations.                                               |
-| Points              | `/points`                              | Participation rate, officer totals, on-demand Admin transaction entry, and point history.                   |
-| System Log          | `/system-log`                          | Admin-only, searchable and paginated record of changes made in Cappy Hub.                                   |
-| Admin               | `/admin`                               | Admin-only directory to existing administration areas.                                                      |
-| Login               | `/login`                               | Google sign-in; local development also offers local test-account buttons.                                   |
-| Access denied       | `/access-denied`                       | Explains that the signed-in Google account lacks Cappy Hub access and offers sign-out.                      |
-| Error and not found | `app/error.tsx`, `app/not-found.tsx`   | Generic load failure with retry; record/page not found with a dashboard link.                               |
+| Surface             | Current route                          | Current scope                                                                                                                  |
+| ------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Dashboard           | `/`                                    | Club counts, personal access and point total, current action items, upcoming events, recent point activity.                    |
+| Events              | `/events`                              | Search/filter, participation-based groups, event status and signup actions.                                                    |
+| Event detail        | `/events/[id]`                         | Event information, participation, manager actions, and event point history.                                                    |
+| Create/edit event   | `/events/new`, `/events/[id]/edit`     | Event fields and recurring-series controls where applicable.                                                                   |
+| Tasks               | `/tasks`                               | Search/filter, Your tasks and Other tasks, assignment counts, and available task actions.                                      |
+| Task detail         | `/tasks/[id]`                          | Task details, per-Officer completion management, and recurring-task actions where applicable.                                  |
+| Create/edit task    | `/tasks/new`, `/tasks/[id]/edit`       | New tasks can repeat; authorized managers edit standalone and recurring Tasks.                                                 |
+| Calendar            | `/calendar`                            | FullCalendar month grid with Event/Task visibility toggles.                                                                    |
+| Officers            | `/officers`                            | Directory filters, officer table, and warning decisions awaiting the current user.                                             |
+| Officer detail      | `/officers/[id]`                       | Profile identity, approved optional profile details, application access, warnings when visible, associated events, and points. |
+| Add/edit officer    | `/officers/new`, `/officers/[id]/edit` | Officer record fields; application role is managed separately.                                                                 |
+| Officer catalogs    | `/officers/catalogs`                   | Admin-only positions, branches, and reusable event locations.                                                                  |
+| Points              | `/points`                              | Participation rate, officer totals, on-demand Admin transaction entry, and point history.                                      |
+| System Log          | `/system-log`                          | Admin-only, searchable and paginated record of changes made in Cappy Hub.                                                      |
+| Admin               | `/admin`                               | Admin-only directory to existing administration areas.                                                                         |
+| Login               | `/login`                               | Google sign-in; local development also offers local test-account buttons.                                                      |
+| Access denied       | `/access-denied`                       | Explains that the signed-in Google account lacks Cappy Hub access and offers sign-out.                                         |
+| Error and not found | `app/error.tsx`, `app/not-found.tsx`   | Generic load failure with retry; record/page not found with a dashboard link.                                                  |
 
 `/events/types` currently redirects to `/events`; it is not a separate event-type management screen. Recurrence controls are part of event/task forms and detail workflows, not a standalone recurring-work area.
 
@@ -46,6 +46,8 @@ The external design reference named in the changelog is only an influence on gen
 **CURRENT:** Protected pages require a current officer account. The horizontal navigation links to Dashboard, Events, Tasks, Calendar, Officers, and Points; it stays on one row at supported desktop widths (1024–1920px). Admin appears there only when the current application role is `admin`. The right side shows the theme toggle, current officer name, and Sign out. System Log and Officer catalogs are not top-level navigation destinations; existing links into them come from Admin and Officers respectively.
 
 **CURRENT:** Admin-only tasks include the Admin landing page, officer/catalog management, point configuration and manual point actions, and System Log. Event/Task creation and management also depend on branch visibility: admins and the President/Vice Presidents can manage all branches; a Lead can manage work in their assigned branches. Active Officers may self-assign Tasks; only authorized managers control completion. Preserve the server-enforced permissions; visual hiding is not a substitute for them.
+
+**APPROVED FOR ISSUE #140:** Officer Detail shows only supplied values from the eleven approved optional profile fields. Every active Officer can view another Officer's profile details; only the owner and Admins see profile edit controls. Missing values are omitted, and a profile with no supplied details uses a concise empty state. The profile editor is an accessible on-demand dialog that retains invalid input and reports save status. Profile details do not appear on the directory or unrelated pages. Retention and audit recommendations remain pending maintainer approval before merge.
 
 ## 3. Design principles
 
@@ -599,4 +601,5 @@ Every generated redesign must preserve the existing screen's access rules, actua
 - **2026-10-11 — Event form grouping.** Increased form section and field spacing, clarified optional resource links, and placed recurrence scope and settings after event participation details. Event fields, validation, capacity, recurrence behavior, and Server Actions remain unchanged.
 - **2026-10-11 — Desktop header navigation.** Kept all existing navigation links on one row at the supported 1024–1920px desktop widths and slightly reduced link padding at desktop sizes. Admin remains visible only to Admins; destinations and role behavior are unchanged.
 - **2026-10-11 — Admin list and table density.** Kept temporal and participation group labels while compacting empty Events and Tasks groups; made catalog names plain text until Rename is chosen; tightened System Log rows with expandable changed fields; and made Point amount editing an explicit compact Save/Cancel action. Existing filters, permissions, audit values, signed Point behavior, and catalog lifecycle remain unchanged.
+- **2026-10-12 — Issue #140 Officer profile details (approved, implementation pending).** Officer Detail may show eleven approved optional profile fields, readable to every active Officer and editable only by the profile owner or an Admin. Missing values are omitted and empty profiles use a concise state. The edit dialog preserves Cappy Hub form and accessibility conventions. Retention and audit recommendations remain pending maintainer approval.
 - **2026-10-12 — Task forms and Event roster.** Top-aligned the compact Task Title input beside Description, clarified the optional recurrence setting, and bounded the expanded Event bulk-add checklist while keeping the native disclosure and confirmed roster in context. Task fields, recurrence scopes, event links, signup/waitlist/capacity behavior, points, authorization, and Server Actions remain unchanged.

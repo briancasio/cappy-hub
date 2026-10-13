@@ -51,17 +51,25 @@ export const applicationRoleChangeInputSchema = zod.object({
   role: applicationRoleSchema,
 });
 
+const profileText = (maxLength: number) =>
+  zod.string().trim().max(maxLength, `Use ${maxLength} characters or fewer`);
+
 export const saveOfficerProfileInputSchema = zod.object({
   officer_id: safeIntegerStringSchema("Officer not found"),
-  birthday: zod.string().transform((val) => val.trim()),
-  hobbies: zod.string().transform((val) => val.trim()),
-  favorite_color: zod.string().transform((val) => val.trim()),
-  favorite_song: zod.string().transform((val) => val.trim()),
-  personality_type: zod.string().transform((val) => val.trim()),
-  favorite_pokemon: zod.string().transform((val) => val.trim()),
-  personal_motto: zod.string().transform((val) => val.trim()),
-  instagram_handle: zod.string().transform((val) => val.trim()),
-  photo_url: zod.string().transform((val) => val.trim()),
+  birthday: profileText(100),
+  hobbies: profileText(1000),
+  favorite_color: profileText(100),
+  favorite_song: profileText(200),
+  personality_type: profileText(32),
+  favorite_pokemon: profileText(100),
+  personal_motto: profileText(500),
+  instagram_handle: profileText(64),
+  photo_url: profileText(2048).refine(
+    (value) =>
+      value === "" ||
+      (zod.url().safeParse(value).success && /^https?:\/\//i.test(value)),
+    "Enter a valid HTTP or HTTPS URL",
+  ),
   has_cic_shirt: zod
     .union([
       zod.literal("on"),
@@ -70,6 +78,6 @@ export const saveOfficerProfileInputSchema = zod.object({
       zod.literal(""),
     ])
     .optional()
-    .transform((val) => val === "on" || val === "true"),
-  tshirt_size: zod.string().transform((val) => val.trim()),
+    .transform((val) => (val === "" ? null : val === "on" || val === "true")),
+  tshirt_size: profileText(32),
 });

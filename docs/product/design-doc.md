@@ -59,13 +59,25 @@ Zero Event Branches means a global Event. Branches do not define Positions or ap
 
 ### Current / shipped
 
-Admins create and edit Officer profiles, manage application roles through the access workflow, and can deactivate or reactivate Officers. Profiles expose Officer identity, Position, Branches, status, associated Event participation, warnings according to visibility rules, total Points, and Point history. The directory supports name/email search and status, Position, and Branch filters.
+Admins create and edit Officer identity, manage application roles through the access workflow, and can deactivate or reactivate Officers. Profiles expose Officer identity, Position, Branches, status, associated Event participation, warnings according to visibility rules, total Points, and Point history. The directory supports name/email search and status, Position, and Branch filters.
 
 Deactivation preserves the Officer row, authentication link, and Event, Task, Warning, Point, and audit references, including existing Event signups. It is a lifecycle change, not routine hard deletion. Inactive Officers cannot access protected workflows or be newly signed up, assigned, or selected as a manual Point recipient through trusted mutations. The Officers directory defaults to Active and offers explicit Active, Inactive, and All views; routine Point totals and new recipient selectors include only active Officers. Point history and Officer profiles remain available for historical records. Position, Branches, and application role are not implicitly changed by deactivation or reactivation.
 
 Position authorization uses stable, non-null machine codes only for the six required Positions: President, Vice President of Operations, Vice President of Academics, Secretary, Lead, and Officer. These codes are independent of display names, and the required Positions cannot be renamed, deleted, or retired. Every Position has a stable database ID; custom Positions intentionally retain `code = NULL`, so changing or copying a display name cannot grant system privileges. Admins may create and rename custom Positions, retire or reactivate them, and safely delete them only when unreferenced. Branches may be created, renamed, retired, or reactivated; safe deletion is restricted when historical records still reference them. Retired Branches and custom Positions remain readable through existing relationships but cannot be newly assigned. An existing relationship can remain during an unrelated edit or be removed.
 
 ### Planned / accepted
+
+#### Issue #140 — approved profile details (implementation pending)
+
+The eleven optional typed fields are birthday, hobbies, favorite color, favorite song, personality type, favorite Pokémon, personal motto, Instagram handle, photo URL, CIC shirt status, and T-shirt size. They help Officers share their personalities with Coding Interview Club members and are maintained in Cappy Hub; external onboarding form synchronization is out of scope.
+
+Any active authenticated Officer may read any Officer's approved profile details regardless of Branch or Position. Admins have the same read access and may edit any profile; an active Officer may edit only their own. Leads and Event Executives receive no additional edit authority. Anonymous, unlinked, and inactive accounts cannot read or edit profile details. Show these fields only on Officer Detail and omit missing values.
+
+Profile mutations are authorized by a trusted database function.
+
+**Audit recommendation pending maintainer approval before merge:** Record meaningful profile changes in System Log with actor, target Officer, operation, and changed field names; exclude personal values from audit details and do not log routine reads. This recommendation is not a previously approved policy.
+
+**Retention recommendation pending maintainer approval:** Preserve profile details when an Officer becomes inactive. Inactive Officers cannot access or edit them; reactivation does not recreate data from external forms; existing history is not automatically erased. This recommendation is not an approved lifecycle decision.
 
 ## 6. Events
 
@@ -184,7 +196,7 @@ The following rules are enforced, or must be enforced where indicated, at a trus
 
 ## 15. Planned / accepted behavior
 
-No accepted open product decisions are listed in this revision. Decisions from completed Issues are incorporated into the current behavior above; their implementation status on `main` is distinct from production deployment status.
+Issue [#140](https://github.com/ehuerta6/cappy-hub/issues/140) approves the eleven optional Officer profile fields and their purpose, source, read/edit permissions, validation direction, and Officer Detail placement. Implementation is pending. The recommended profile retention and audit policies require maintainer approval before merge and are recorded as recommendations, not approved lifecycle/audit decisions.
 
 ## 16. Audit and history expectations
 
@@ -196,7 +208,7 @@ Logical removal, deactivation, cancellation, correction, retirement, void, and r
 
 - Google Drive remains the external collaborative file system; Event resource fields store URLs only.
 - The Event Signup sheet is an optional external resource URL. There is no Google Sheets OAuth, row synchronization, import, export, or roster reconciliation.
-- Additional Officer profile fields have no approved allowlist; Issue [#140](https://github.com/ehuerta6/cappy-hub/issues/140) remains blocked pending field-specific purpose, visibility, editing, retention, and audit decisions. Candidate onboarding fields are not requirements.
+- No additional Officer profile fields or external form synchronization are in scope beyond the eleven approved fields documented under Officers and Issue [#140](https://github.com/ehuerta6/cappy-hub/issues/140).
 - The internal Calendar is read-only. Google Calendar integration is separate work tracked by [#29](https://github.com/ehuerta6/cappy-hub/issues/29) and is not part of this specification's shipped behavior or Issue #183 scope.
 - Cappy Hub has no separate attendance/check-in subsystem. Confirmed native Event signups are the participation roster under current behavior.
 - The Dashboard does not introduce speculative analytics, metrics, or duplicated workflows.

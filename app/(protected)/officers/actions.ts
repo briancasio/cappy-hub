@@ -196,7 +196,7 @@ export async function saveOfficerProfile(
     p_personal_motto: validated.personal_motto || undefined,
     p_instagram_handle: validated.instagram_handle || undefined,
     p_photo_url: validated.photo_url || undefined,
-    p_has_cic_shirt: validated.has_cic_shirt,
+    p_has_cic_shirt: validated.has_cic_shirt ?? undefined,
     p_tshirt_size: validated.tshirt_size || undefined,
   });
   if (error) {
@@ -207,5 +207,5 @@ export async function saveOfficerProfile(
     );
   }
   revalidatePath("/", "layout");
-  return { error: "", success: "Onboarding details saved" };
+  return { error: "", success: "Profile details saved" };
 }

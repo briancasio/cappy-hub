@@ -464,7 +464,7 @@ export type Database = {
           favorite_color: string | null;
           favorite_pokemon: string | null;
           favorite_song: string | null;
-          has_cic_shirt: boolean;
+          has_cic_shirt: boolean | null;
           hobbies: string | null;
           instagram_handle: string | null;
           officer_id: number;
@@ -480,7 +480,7 @@ export type Database = {
           favorite_color?: string | null;
           favorite_pokemon?: string | null;
           favorite_song?: string | null;
-          has_cic_shirt?: boolean;
+          has_cic_shirt?: boolean | null;
           hobbies?: string | null;
           instagram_handle?: string | null;
           officer_id: number;
@@ -496,7 +496,7 @@ export type Database = {
           favorite_color?: string | null;
           favorite_pokemon?: string | null;
           favorite_song?: string | null;
-          has_cic_shirt?: boolean;
+          has_cic_shirt?: boolean | null;
           hobbies?: string | null;
           instagram_handle?: string | null;
           officer_id?: number;

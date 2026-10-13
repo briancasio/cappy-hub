@@ -78,7 +78,7 @@ it("renders trigger button and opens dialog upon click", async () => {
   const trigger = host.querySelector<HTMLButtonElement>(
     'button[type="button"]',
   );
-  expect(trigger?.textContent).toContain("Edit onboarding details");
+  expect(trigger?.textContent).toContain("Edit profile details");
 
   const dialog = host.querySelector<HTMLDialogElement>("dialog");
   expect(dialog?.hasAttribute("open")).toBe(false);

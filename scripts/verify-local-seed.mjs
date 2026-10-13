@@ -65,6 +65,7 @@ const output = run(
       "(select count(*) from public.events),",
       "(select count(*) from public.point_transactions),",
       "(select count(*) from public.officer_warnings),",
+      "(select count(*) from public.officer_profiles where (officer_id=-1010 and birthday='October 15' and favorite_pokemon='Gengar') or (officer_id=-1013 and hobbies='Reading, robotics' and favorite_pokemon='Pikachu')),",
       "(select count(*) from public.tasks t where t.id=-8001 and not exists",
       "  (select 1 from public.task_officer_assignments a where a.task_id=t.id)),",
       "(select count(*) from public.task_officer_assignments where task_id=-8003),",
@@ -83,6 +84,7 @@ const [
   events,
   points,
   warnings,
+  officerProfiles,
   unassignedTask,
   singleOfficerTask,
   multiOfficerTask,
@@ -91,9 +93,15 @@ const [
   pastNotCompletedNoAward,
 ] = output.split("|").map((value) => Number(value));
 
-if (officers < 20 || events < 10 || points < 250 || warnings < 6) {
+if (
+  officers < 20 ||
+  events < 10 ||
+  points < 250 ||
+  warnings < 6 ||
+  officerProfiles !== 2
+) {
   throw new Error(
-    `Seed verification failed: officers=${officers}, events=${events}, points=${points}, warnings=${warnings}`,
+    `Seed verification failed: officers=${officers}, events=${events}, points=${points}, warnings=${warnings}, officerProfiles=${officerProfiles}`,
   );
 }
 if (

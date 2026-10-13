@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import {
   withReturnTo,
   type NavigationSearchParams,
@@ -59,8 +60,7 @@ export default async function OfficerDetailPage({
     .maybeSingle();
   if (error) throw new Error(`Failed to load officer: ${error.message}`);
   if (!officer) notFound();
-  const canSeeProfile =
-    canViewOfficerProfiles(actor) || actor.id === officer.id;
+  const canSeeProfile = canViewOfficerProfiles();
   const canEditProfile = canEditOfficerProfile(actor, officer.id);
   const [total, events, transactions, profile] = await Promise.all([
     supabase
@@ -121,6 +121,26 @@ export default async function OfficerDetailPage({
       (!selectedStatus || warning.status === selectedStatus)
     );
   });
+  const profileEntries = profile.data
+    ? Object.entries({
+        Birthday: profile.data.birthday,
+        Hobbies: profile.data.hobbies,
+        "Favorite color": profile.data.favorite_color,
+        "Favorite song": profile.data.favorite_song,
+        "Personality type": profile.data.personality_type,
+        "Favorite Pokémon": profile.data.favorite_pokemon,
+        "Personal motto": profile.data.personal_motto,
+        Instagram: profile.data.instagram_handle,
+        "T-shirt size": profile.data.tshirt_size,
+        "CIC shirt":
+          profile.data.has_cic_shirt === null
+            ? null
+            : profile.data.has_cic_shirt
+              ? "Yes"
+              : "No",
+        Photo: profile.data.photo_url,
+      }).filter(([, value]) => value !== null && value !== "")
+    : [];
   const approvedCount = visibleWarnings.filter(
     (warning) => warning.status === "approved" && warning.voided_at === null,
   ).length;
@@ -170,7 +190,7 @@ export default async function OfficerDetailPage({
           {canSeeProfile && (
             <section className="rounded-lg border border-border bg-surface/30 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <SectionHeading title="Onboarding details" />
+                <SectionHeading title="Profile details" />
                 {canEditProfile && !profile.error && (
                   <OfficerProfileDialog
                     officerId={officer.id}
@@ -180,46 +200,34 @@ export default async function OfficerDetailPage({
               </div>
               {profile.error ? (
                 <p role="alert" className="text-sm">
-                  Onboarding details unavailable. Reload this page to retry.
+                  Profile details unavailable. Reload this page to retry.
                 </p>
-              ) : (
+              ) : profileEntries.length > 0 ? (
                 <dl className="grid grid-cols-[9rem_minmax(0,1fr)] gap-x-5 gap-y-2 text-sm [&>dt]:mt-0 [&>dd]:mt-0 [&>dd]:min-w-0 [&>dd]:break-words">
-                  <dt>Birthday</dt>
-                  <dd>{profile.data?.birthday ?? "Not provided"}</dd>
-                  <dt>Hobbies</dt>
-                  <dd>{profile.data?.hobbies ?? "Not provided"}</dd>
-                  <dt>Favorite color</dt>
-                  <dd>{profile.data?.favorite_color ?? "Not provided"}</dd>
-                  <dt>Favorite song</dt>
-                  <dd>{profile.data?.favorite_song ?? "Not provided"}</dd>
-                  <dt>Personality type</dt>
-                  <dd>{profile.data?.personality_type ?? "Not provided"}</dd>
-                  <dt>Fav Pokémon</dt>
-                  <dd>{profile.data?.favorite_pokemon ?? "Not provided"}</dd>
-                  <dt>Motto</dt>
-                  <dd>{profile.data?.personal_motto ?? "Not provided"}</dd>
-                  <dt>Instagram</dt>
-                  <dd>{profile.data?.instagram_handle ?? "Not provided"}</dd>
-                  <dt>T-shirt size</dt>
-                  <dd>{profile.data?.tshirt_size ?? "Not provided"}</dd>
-                  <dt>Has CIC shirt</dt>
-                  <dd>{profile.data?.has_cic_shirt ? "Yes" : "No"}</dd>
-                  <dt>Photo URL</dt>
-                  <dd>
-                    {profile.data?.photo_url ? (
-                      <a
-                        href={profile.data.photo_url}
-                        className="text-secondary hover:underline break-all"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {profile.data.photo_url}
-                      </a>
-                    ) : (
-                      "Not provided"
-                    )}
-                  </dd>
+                  {profileEntries.map(([label, value]) => (
+                    <Fragment key={label}>
+                      <dt>{label}</dt>
+                      <dd>
+                        {label === "Photo" && typeof value === "string" ? (
+                          <a
+                            href={value}
+                            className="break-all text-secondary hover:underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {value}
+                          </a>
+                        ) : (
+                          value
+                        )}
+                      </dd>
+                    </Fragment>
+                  ))}
                 </dl>
+              ) : (
+                <p className="text-sm text-secondary">
+                  No profile details have been shared yet.
+                </p>
               )}
             </section>
           )}

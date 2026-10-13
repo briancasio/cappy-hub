@@ -65,6 +65,32 @@ it("renders readable before and after values for an Officer role change", () => 
   ]);
 });
 
+it("shows profile mutation fields in the System Log without exposing values", () => {
+  const result = presentAuditEntry(
+    {
+      action: "officer.profile_updated",
+      entity_type: "officer",
+      entity_id: 42,
+      details: {
+        target_officer_id: 42,
+        changed_fields: ["birthday", "photo_url", "has_cic_shirt"],
+      },
+    },
+    {
+      officerNames: new Map([[42, "Noel Lozano"]]),
+    },
+  );
+
+  expect(result.activity).toBe("Updated Noel Lozano's profile details");
+  expect(result.changes).toEqual([
+    {
+      label: "Fields changed",
+      value: "Birthday, Photo URL, CIC shirt",
+    },
+  ]);
+  expect(result.changes.join(" ")).not.toContain("October 15");
+});
+
 it("labels signup sheet URL audit changes for officers", () => {
   const result = presentAuditEntry({
     action: "event.links_updated",
