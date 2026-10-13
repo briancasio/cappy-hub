@@ -3,6 +3,7 @@
 import {
   getAuthorizationContext,
   canManageOfficers,
+  canEditOfficerProfile,
 } from "@/lib/authorization";
 
 import { withReturnTo } from "@/lib/return-context";
@@ -19,6 +20,7 @@ import {
 import {
   applicationRoleChangeInputSchema,
   saveOfficerInputSchema,
+  saveOfficerProfileInputSchema,
 } from "./validation";
 
 const officerFormFields = [
@@ -131,4 +133,79 @@ export async function changeApplicationRole(
     return formFailure(mutationError(error.message), formData, ["role"]);
   revalidatePath("/", "layout");
   return { error: "", success: "Application role saved" };
+}
+
+const officerProfileFormFields = [
+  "birthday",
+  "hobbies",
+  "favorite_color",
+  "favorite_song",
+  "personality_type",
+  "favorite_pokemon",
+  "personal_motto",
+  "instagram_handle",
+  "photo_url",
+  "has_cic_shirt",
+  "tshirt_size",
+] as const;
+
+export async function saveOfficerProfile(
+  _previous: FormActionState,
+  formData: FormData,
+) {
+  const actor = await getAuthorizationContext();
+  const rawInput = {
+    officer_id: formData.get("officer_id") ?? "",
+    birthday: formData.get("birthday") ?? "",
+    hobbies: formData.get("hobbies") ?? "",
+    favorite_color: formData.get("favorite_color") ?? "",
+    favorite_song: formData.get("favorite_song") ?? "",
+    personality_type: formData.get("personality_type") ?? "",
+    favorite_pokemon: formData.get("favorite_pokemon") ?? "",
+    personal_motto: formData.get("personal_motto") ?? "",
+    instagram_handle: formData.get("instagram_handle") ?? "",
+    photo_url: formData.get("photo_url") ?? "",
+    has_cic_shirt: formData.get("has_cic_shirt") ?? "",
+    tshirt_size: formData.get("tshirt_size") ?? "",
+  };
+  const validationResult = saveOfficerProfileInputSchema.safeParse(rawInput);
+  if (!validationResult.success) {
+    return validationFailure(
+      validationResult.error,
+      formData,
+      officerProfileFormFields,
+    );
+  }
+  const validated = validationResult.data;
+  if (!canEditOfficerProfile(actor, validated.officer_id)) {
+    return formFailure(
+      "Cannot manage another officer's profile unless admin",
+      formData,
+      officerProfileFormFields,
+    );
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("save_officer_profile", {
+    p_officer_id: validated.officer_id,
+    p_birthday: validated.birthday || undefined,
+    p_hobbies: validated.hobbies || undefined,
+    p_favorite_color: validated.favorite_color || undefined,
+    p_favorite_song: validated.favorite_song || undefined,
+    p_personality_type: validated.personality_type || undefined,
+    p_favorite_pokemon: validated.favorite_pokemon || undefined,
+    p_personal_motto: validated.personal_motto || undefined,
+    p_instagram_handle: validated.instagram_handle || undefined,
+    p_photo_url: validated.photo_url || undefined,
+    p_has_cic_shirt: validated.has_cic_shirt,
+    p_tshirt_size: validated.tshirt_size || undefined,
+  });
+  if (error) {
+    return formFailure(
+      mutationError(error.message),
+      formData,
+      officerProfileFormFields,
+    );
+  }
+  revalidatePath("/", "layout");
+  return { error: "", success: "Onboarding details saved" };
 }

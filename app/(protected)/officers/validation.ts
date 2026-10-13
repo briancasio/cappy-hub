@@ -50,3 +50,26 @@ export const applicationRoleChangeInputSchema = zod.object({
   officer_id: positiveSafeIntegerStringSchema("Invalid role assignment"),
   role: applicationRoleSchema,
 });
+
+export const saveOfficerProfileInputSchema = zod.object({
+  officer_id: safeIntegerStringSchema("Officer not found"),
+  birthday: zod.string().transform((val) => val.trim()),
+  hobbies: zod.string().transform((val) => val.trim()),
+  favorite_color: zod.string().transform((val) => val.trim()),
+  favorite_song: zod.string().transform((val) => val.trim()),
+  personality_type: zod.string().transform((val) => val.trim()),
+  favorite_pokemon: zod.string().transform((val) => val.trim()),
+  personal_motto: zod.string().transform((val) => val.trim()),
+  instagram_handle: zod.string().transform((val) => val.trim()),
+  photo_url: zod.string().transform((val) => val.trim()),
+  has_cic_shirt: zod
+    .union([
+      zod.literal("on"),
+      zod.literal("true"),
+      zod.literal("false"),
+      zod.literal(""),
+    ])
+    .optional()
+    .transform((val) => val === "on" || val === "true"),
+  tshirt_size: zod.string().transform((val) => val.trim()),
+});

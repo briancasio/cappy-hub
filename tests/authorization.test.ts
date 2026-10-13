@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
 
-import { canManageEvent } from "@/lib/authorization";
+import { canManageEvent, canEditOfficerProfile } from "@/lib/authorization";
 
 const actor = (
   positionCode: string,
@@ -58,5 +58,23 @@ describe("canManageEvent branch authorization", () => {
 
   it("does not grant Event management to ordinary Officers", () => {
     expect(canManageEvent(actor("officer", [1]), [1])).toBe(false);
+  });
+});
+
+describe("canEditOfficerProfile authorization", () => {
+  it("allows officers to edit their own profile", () => {
+    const officer = { id: 10, applicationRole: "officer" } as never;
+    expect(canEditOfficerProfile(officer, 10)).toBe(true);
+  });
+
+  it("denies officers editing other officers' profiles", () => {
+    const officer = { id: 10, applicationRole: "officer" } as never;
+    expect(canEditOfficerProfile(officer, 20)).toBe(false);
+  });
+
+  it("allows admins to edit any officer profile", () => {
+    const admin = { id: 1, applicationRole: "admin" } as never;
+    expect(canEditOfficerProfile(admin, 1)).toBe(true);
+    expect(canEditOfficerProfile(admin, 20)).toBe(true);
   });
 });

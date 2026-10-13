@@ -30,5 +30,11 @@ export const canManageEvent = (
     branches.length > 0 &&
     branches.some((id) => actor.branchIds.includes(id)));
 export const canManageOfficers = isAdmin;
+export const canViewOfficerProfiles = (actor: AuthorizationContext) =>
+  isAdmin(actor) || isEventExecutive(actor) || isLead(actor);
+export const canEditOfficerProfile = (
+  actor: AuthorizationContext,
+  targetOfficerId: number,
+) => isAdmin(actor) || actor.id === targetOfficerId;
 export const canManagePoints = isAdmin;
 export const canViewSystemLog = isAdmin;

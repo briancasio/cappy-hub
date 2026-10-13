@@ -6,8 +6,11 @@ import ContextualBackLink from "@/components/contextual-back-link";
 import {
   getAuthorizationContext,
   canManageOfficers,
+  canViewOfficerProfiles,
+  canEditOfficerProfile,
   isAdmin,
 } from "@/lib/authorization";
+import OfficerProfileDialog from "./officer-profile-dialog";
 import PointTransactionTable from "@/components/point-transaction-table";
 import { eventStatus } from "@/lib/event-status";
 import Link from "next/link";
@@ -56,7 +59,10 @@ export default async function OfficerDetailPage({
     .maybeSingle();
   if (error) throw new Error(`Failed to load officer: ${error.message}`);
   if (!officer) notFound();
-  const [total, events, transactions] = await Promise.all([
+  const canSeeProfile =
+    canViewOfficerProfiles(actor) || actor.id === officer.id;
+  const canEditProfile = canEditOfficerProfile(actor, officer.id);
+  const [total, events, transactions, profile] = await Promise.all([
     supabase
       .from("officer_point_totals")
       .select("total_points")
@@ -76,6 +82,13 @@ export default async function OfficerDetailPage({
       .order("created_at", { ascending: false })
       .order("id", { ascending: false })
       .limit(100),
+    canSeeProfile
+      ? supabase
+          .from("officer_profiles")
+          .select("*")
+          .eq("officer_id", officerId)
+          .maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
   ]);
   const showWarnings = isAdmin(actor) || actor.id === officer.id;
   const warnings = showWarnings
@@ -154,6 +167,62 @@ export default async function OfficerDetailPage({
                 : "Not specified"}
             </dd>
           </dl>
+          {canSeeProfile && (
+            <section className="rounded-lg border border-border bg-surface/30 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <SectionHeading title="Onboarding details" />
+                {canEditProfile && !profile.error && (
+                  <OfficerProfileDialog
+                    officerId={officer.id}
+                    profile={profile.data}
+                  />
+                )}
+              </div>
+              {profile.error ? (
+                <p role="alert" className="text-sm">
+                  Onboarding details unavailable. Reload this page to retry.
+                </p>
+              ) : (
+                <dl className="grid grid-cols-[9rem_minmax(0,1fr)] gap-x-5 gap-y-2 text-sm [&>dt]:mt-0 [&>dd]:mt-0 [&>dd]:min-w-0 [&>dd]:break-words">
+                  <dt>Birthday</dt>
+                  <dd>{profile.data?.birthday ?? "Not provided"}</dd>
+                  <dt>Hobbies</dt>
+                  <dd>{profile.data?.hobbies ?? "Not provided"}</dd>
+                  <dt>Favorite color</dt>
+                  <dd>{profile.data?.favorite_color ?? "Not provided"}</dd>
+                  <dt>Favorite song</dt>
+                  <dd>{profile.data?.favorite_song ?? "Not provided"}</dd>
+                  <dt>Personality type</dt>
+                  <dd>{profile.data?.personality_type ?? "Not provided"}</dd>
+                  <dt>Fav Pokémon</dt>
+                  <dd>{profile.data?.favorite_pokemon ?? "Not provided"}</dd>
+                  <dt>Motto</dt>
+                  <dd>{profile.data?.personal_motto ?? "Not provided"}</dd>
+                  <dt>Instagram</dt>
+                  <dd>{profile.data?.instagram_handle ?? "Not provided"}</dd>
+                  <dt>T-shirt size</dt>
+                  <dd>{profile.data?.tshirt_size ?? "Not provided"}</dd>
+                  <dt>Has CIC shirt</dt>
+                  <dd>{profile.data?.has_cic_shirt ? "Yes" : "No"}</dd>
+                  <dt>Photo URL</dt>
+                  <dd>
+                    {profile.data?.photo_url ? (
+                      <a
+                        href={profile.data.photo_url}
+                        className="text-secondary hover:underline break-all"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {profile.data.photo_url}
+                      </a>
+                    ) : (
+                      "Not provided"
+                    )}
+                  </dd>
+                </dl>
+              )}
+            </section>
+          )}
           {total.error ? (
             <p role="alert" className="text-sm">
               Total points unavailable. Reload this page to retry.
